@@ -1,0 +1,255 @@
+import { test, expect } from '@playwright/test'
+import { enableCursorTracking } from './helpers/cursor-tracker'
+import { wait, typeDelay, timeout, logSpeedConfig } from './helpers/demo-config'
+const DEMO_MODE = process.env.DEMO_MODE === 'true'
+
+
+test.describe('TechCorp Financial - Step 10: Continuous Monitoring', () => {
+  test('monitor governance effectiveness, risk, compliance, and performance', async ({ page }) => {
+    test.setTimeout(timeout(120000)) // Base: 2 minutes
+
+    console.log('\n🎬 ========================================')
+    console.log('   TECHCORP FINANCIAL SERVICES')
+    console.log('   Step 10: Continuous Monitoring')
+    console.log('   Real-time Governance Dashboards')
+    console.log('========================================\n')
+    logSpeedConfig()
+
+    if (DEMO_MODE) await enableCursorTracking(page)
+
+    await page.goto('http://localhost:5174/')
+    await page.waitForLoadState('networkidle')
+
+    console.log('📍 Navigating to Continuous Monitoring...\n')
+    await page.locator('aside nav button').filter({ hasText: /Continuous Monitoring/i }).click()
+    if (DEMO_MODE) await page.waitForTimeout(wait(3000))
+
+    // Scroll to top to start
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1000))
+
+    console.log('📊 GOVERNANCE MONITORING DASHBOARDS')
+    console.log('   Real-time monitoring across 4 key areas...\n')
+
+    // Governance Monitoring
+    console.log('   🛡️  1. GOVERNANCE MONITORING (Monthly Dashboard)\n')
+
+    const governanceMetrics = [
+      { metric: 'Governance Effectiveness Score', value: '3.2 / 5.0', target: '4.0', status: '🟡' },
+      { metric: 'IT Steering Committee Attendance', value: '95%', target: '90%', status: '🟢' },
+      { metric: 'Governance Policy Compliance', value: '92%', target: '100%', status: '🟡' },
+      { metric: 'Escalated Issues Resolved', value: '18 of 22 (82%)', target: '100%', status: '🟡' },
+      { metric: 'Governance Training Completion', value: '87%', target: '100%', status: '🟡' }
+    ]
+
+    governanceMetrics.forEach(m => {
+      console.log(`   ${m.status} ${m.metric}`)
+      console.log(`      Current: ${m.value} | Target: ${m.target}`)
+    })
+
+    console.log('\n   📅 Quarterly Governance Reviews:')
+    console.log('   • Governance framework effectiveness assessment')
+    console.log('   • Stakeholder satisfaction surveys')
+    console.log('   • Governance process audits')
+    console.log('   • Exception reporting and trends analysis\n')
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Risk Monitoring section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.3, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Risk Monitoring
+    console.log('   ⚠️  2. RISK MONITORING (Updated Monthly)\n')
+
+    console.log('   CURRENT RISK PROFILE:')
+    console.log('   • Total Active IT Risks: 45')
+    console.log('     - High Risks: 8 🔴')
+    console.log('     - Medium Risks: 22 🟡')
+    console.log('     - Low Risks: 15 🟢')
+    console.log('   • Risks Trending Up: 6 (cybersecurity, cloud complexity)')
+    console.log('   • Risks Trending Down: 4 (legacy systems being retired)\n')
+
+    console.log('   TOP IT RISKS BEING MONITORED:\n')
+
+    const topRisks = [
+      {
+        risk: 'Cybersecurity Breach Risk',
+        inherent: 'High',
+        residual: 'Medium',
+        mitigations: 'Zero trust, SIEM, SOC, security training',
+        trend: 'Stable'
+      },
+      {
+        risk: 'Cloud Migration Complexity',
+        inherent: 'High',
+        residual: 'Medium',
+        mitigations: 'CCoE, architecture reviews, testing',
+        trend: 'Increasing ↑'
+      },
+      {
+        risk: 'Regulatory Compliance',
+        inherent: 'High',
+        residual: 'Low',
+        mitigations: 'GRC system, continuous monitoring, legal reviews',
+        trend: 'Stable'
+      },
+      {
+        risk: 'Talent Retention',
+        inherent: 'Medium',
+        residual: 'Medium',
+        mitigations: 'Compensation reviews, development programs',
+        trend: 'Increasing ↑'
+      },
+      {
+        risk: 'Legacy System Technical Debt',
+        inherent: 'High',
+        residual: 'Medium',
+        mitigations: 'Modernization roadmap, risk-based prioritization',
+        trend: 'Decreasing ↓'
+      }
+    ]
+
+    topRisks.forEach((risk, idx) => {
+      console.log(`   ${idx + 1}. ${risk.risk}`)
+      console.log(`      Inherent: ${risk.inherent} → Residual: ${risk.residual}`)
+      console.log(`      Mitigations: ${risk.mitigations}`)
+      console.log(`      Trend: ${risk.trend}\n`)
+    })
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Compliance Monitoring section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.5, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Compliance Monitoring
+    console.log('   ✅ 3. COMPLIANCE MONITORING (Updated Monthly)\n')
+
+    console.log('   REGULATORY COMPLIANCE STATUS:\n')
+
+    const complianceStatus = [
+      { regulation: 'SOX IT Controls', status: '98% effective', findings: '2 minor deficiencies in remediation', rating: '🟡' },
+      { regulation: 'GDPR Compliance', status: '96% compliant', findings: 'Data mapping ongoing', rating: '🟡' },
+      { regulation: 'PCI-DSS', status: '100% compliant', findings: 'Validated Q1 2024', rating: '🟢' },
+      { regulation: 'NYDFS Cybersecurity', status: '94% compliant', findings: '4 open items', rating: '🟡' },
+      { regulation: 'ISO 27001 Readiness', status: '92% ready', findings: 'Certification audit Q4 2024', rating: '🟡' }
+    ]
+
+    complianceStatus.forEach(comp => {
+      console.log(`   ${comp.rating} ${comp.regulation}`)
+      console.log(`      Status: ${comp.status}`)
+      console.log(`      Notes: ${comp.findings}\n`)
+    })
+
+    console.log('   COMPLIANCE MONITORING ACTIVITIES:')
+    console.log('   • Control self-assessments: Quarterly')
+    console.log('   • Compliance testing: Continuous automated + quarterly manual')
+    console.log('   • Regulatory change monitoring: Continuous via RegTech')
+    console.log('   • Attestation reports: Quarterly to compliance committee')
+    console.log('   • External audits: Annual SOX, PCI-DSS\n')
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Performance Monitoring section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.7, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Performance Monitoring
+    console.log('   📈 4. PERFORMANCE MONITORING (IT Balanced Scorecard)\n')
+
+    console.log('   STAKEHOLDER PERSPECTIVE:')
+    console.log('   🟡 Stakeholder Satisfaction: 3.8/5.0 (Target: 4.2)')
+    console.log('   🔴 Benefits Realization: 62% (Target: 85%)')
+    console.log('   🟡 Strategic Alignment: 88% (Target: 90%)\n')
+
+    console.log('   FINANCIAL PERSPECTIVE:')
+    console.log('   🔴 IT Budget Variance: +8% (Target: ±5%)')
+    console.log('   🟡 Cost Optimization: 6% reduction (Target: 10%)')
+    console.log('   🟡 Portfolio ROI: 12% (Target: 15%)\n')
+
+    console.log('   INTERNAL PROCESS PERSPECTIVE:')
+    console.log('   🟡 Change Success Rate: 92% (Target: 95%)')
+    console.log('   🔴 Incident Resolution (P1): 5.2 hours (Target: 4 hours)')
+    console.log('   🔴 Project On-Time Delivery: 73% (Target: 85%)\n')
+
+    console.log('   LEARNING & GROWTH PERSPECTIVE:')
+    console.log('   🟡 Employee Satisfaction: 3.9/5.0 (Target: 4.2)')
+    console.log('   🟡 Training Completion: 87% (Target: 95%)')
+    console.log('   🟡 Certifications: 32 of 50 target')
+    console.log('   🔴 Turnover Rate: 14% (Target: <10%)\n')
+
+    console.log('   Overall Performance: MIXED - 4 Red, 11 Yellow, 0 Green')
+    console.log('   Status: Requires attention and improvement initiatives\n')
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to show Monitoring Tools section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.85, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Monitoring Tools
+    console.log('   🛠️  MONITORING TOOLS AND AUTOMATION\n')
+
+    const monitoringTools = [
+      {
+        tool: 'ServiceNow GRC Dashboards',
+        capabilities: 'Risk dashboards, compliance status, policy exceptions, audit findings'
+      },
+      {
+        tool: 'PowerBI Performance Dashboards',
+        capabilities: 'IT Balanced Scorecard, portfolio performance, financial metrics'
+      },
+      {
+        tool: 'Splunk Security Monitoring',
+        capabilities: 'Real-time security events, threat intelligence, compliance reporting'
+      },
+      {
+        tool: 'Dynatrace APM',
+        capabilities: 'Application performance, user experience, automated problem detection'
+      },
+      {
+        tool: 'CloudHealth Cloud Governance',
+        capabilities: 'Multi-cloud cost, policy compliance, resource optimization'
+      }
+    ]
+
+    monitoringTools.forEach((tool, idx) => {
+      console.log(`   ${idx + 1}. ${tool.tool}`)
+      console.log(`      Capabilities: ${tool.capabilities}\n`)
+    })
+
+    console.log('💾 UPDATING MONITORING STATUS\n')
+
+    const saveButton = page.getByRole('button', { name: /save/i })
+    if (await saveButton.isVisible().catch(() => false)) {
+      await saveButton.scrollIntoViewIfNeeded()
+      await saveButton.click()
+      if (DEMO_MODE) await page.waitForTimeout(wait(3000))
+      console.log('   ✅ Monitoring status updated')
+    }
+
+    console.log('\n🎉 ========================================')
+    console.log('   STEP 10 COMPLETED!')
+    console.log('   ========================================')
+    console.log('   ✅ Governance Monitoring: Active')
+    console.log('   ✅ Risk Monitoring: 45 risks tracked')
+    console.log('   ✅ Compliance Monitoring: 5 regulations')
+    console.log('   ✅ Performance Monitoring: 30 KPIs')
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.log('   📊 Monitoring Tools: 5 platforms deployed')
+    console.log('   🔄 Update Frequency: Monthly dashboards')
+    console.log('   ✅ Ready for Internal Assessment')
+    console.log('========================================\n')
+
+    console.log('✨ Demo Step 10 completed successfully!\n')
+  })
+})

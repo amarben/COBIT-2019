@@ -1,0 +1,291 @@
+import { test, expect } from '@playwright/test'
+import { enableCursorTracking } from './helpers/cursor-tracker'
+import { wait, typeDelay, timeout, logSpeedConfig } from './helpers/demo-config'
+const DEMO_MODE = process.env.DEMO_MODE === 'true'
+
+
+test.describe('TechCorp Financial - Step 11: Internal Assessment', () => {
+  test('conduct Q2 2024 capability assessment and identify improvement areas', async ({ page }) => {
+    test.setTimeout(timeout(120000)) // Base: 2 minutes
+
+    console.log('\n🎬 ========================================')
+    console.log('   TECHCORP FINANCIAL SERVICES')
+    console.log('   Step 11: Internal Assessment')
+    console.log('   Q2 2024 Capability Assessment Results')
+    console.log('========================================\n')
+    logSpeedConfig()
+
+    if (DEMO_MODE) await enableCursorTracking(page)
+
+    await page.goto('http://localhost:5174/')
+    await page.waitForLoadState('networkidle')
+
+    console.log('📍 Navigating to Internal Assessment...\n')
+    await page.locator('aside nav button').filter({ hasText: /Internal Assessment/i }).click()
+    if (DEMO_MODE) await page.waitForTimeout(wait(3000))
+
+    // Scroll to top to start
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1000))
+
+    console.log('📋 CAPABILITY ASSESSMENT (Q2 2024)')
+    console.log('   Comprehensive assessment of 40 COBIT objectives...\n')
+
+    // Assessment Methodology
+    console.log('   📐 ASSESSMENT METHODOLOGY:\n')
+    console.log('   • Self-assessment using COBIT Process Assessment Model (PAM)')
+    console.log('   • Validation through document review and interviews')
+    console.log('   • Independent assessment facilitated by internal audit')
+    console.log('   • Process capability scale: 0-5 (Incomplete → Optimizing)\n')
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Overall Results
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.15, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Overall Results
+    console.log('   📊 OVERALL ASSESSMENT RESULTS:\n')
+
+    const overallResults = [
+      { metric: 'Average Current Capability', value: '2.4', description: '(between Managed and Established)' },
+      { metric: 'Average Target Capability', value: '4.0', description: '(Predictable)' },
+      { metric: 'Average Gap', value: '1.6 levels', description: '' },
+      { metric: 'Capability Trend vs Q1', value: '+0.3', description: '(improvement from baseline)' }
+    ]
+
+    overallResults.forEach(result => {
+      console.log(`   • ${result.metric}: ${result.value} ${result.description}`)
+    })
+
+    console.log('\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Domain Assessment
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.3, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Domain-Level Assessment
+    console.log('   🎯 DOMAIN-LEVEL ASSESSMENT:\n')
+
+    const domainAssessment = [
+      {
+        domain: 'EDM (Governance)',
+        avgCurrent: 2.2,
+        avgTarget: 4.0,
+        avgGap: 1.8,
+        status: 'Foundational work in progress',
+        icon: '🛡️'
+      },
+      {
+        domain: 'APO (Align, Plan, Organize)',
+        avgCurrent: 2.4,
+        avgTarget: 4.0,
+        avgGap: 1.6,
+        status: 'Mixed maturity, strategic processes stronger',
+        icon: '🎯'
+      },
+      {
+        domain: 'BAI (Build, Acquire, Implement)',
+        avgCurrent: 2.3,
+        avgTarget: 3.8,
+        avgGap: 1.5,
+        status: 'Agile delivery maturing',
+        icon: '🔨'
+      },
+      {
+        domain: 'DSS (Deliver, Service, Support)',
+        avgCurrent: 2.9,
+        avgTarget: 4.2,
+        avgGap: 1.3,
+        status: 'Strongest domain, operational maturity',
+        icon: '⚡'
+      },
+      {
+        domain: 'MEA (Monitor, Evaluate, Assess)',
+        avgCurrent: 2.5,
+        avgTarget: 4.2,
+        avgGap: 1.7,
+        status: 'Monitoring in place, needs sophistication',
+        icon: '📊'
+      }
+    ]
+
+    domainAssessment.forEach(domain => {
+      console.log(`   ${domain.icon} ${domain.domain}`)
+      console.log(`      Current: ${domain.avgCurrent} | Target: ${domain.avgTarget} | Gap: ${domain.avgGap} levels`)
+      console.log(`      Status: ${domain.status}\n`)
+    })
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Critical Gaps section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.45, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Priority Improvement Areas
+    console.log('   🚨 PRIORITY IMPROVEMENT AREAS:\n')
+
+    console.log('   CRITICAL GAPS (3-level gaps):\n')
+
+    const criticalGaps = [
+      {
+        objective: 'EDM02: Benefits Delivery',
+        current: 1,
+        target: 4,
+        gap: 3,
+        action: 'Implement benefits realization framework',
+        owner: 'Portfolio Management Office',
+        timeline: 'Q3-Q4 2024',
+        investment: '$500K'
+      },
+      {
+        objective: 'APO04: Innovation',
+        current: 1,
+        target: 3,
+        gap: 2,
+        action: 'Establish innovation management process',
+        owner: 'Innovation Council',
+        timeline: 'Q4 2024 - Q1 2025',
+        investment: '$1M'
+      }
+    ]
+
+    criticalGaps.forEach((gap, idx) => {
+      console.log(`   ${idx + 1}. ${gap.objective}`)
+      console.log(`      Current: ${gap.current} | Target: ${gap.target} | Gap: ${gap.gap} levels`)
+      console.log(`      Action: ${gap.action}`)
+      console.log(`      Owner: ${gap.owner}`)
+      console.log(`      Timeline: ${gap.timeline}`)
+      console.log(`      Investment: ${gap.investment}\n`)
+    })
+
+    console.log('   HIGH-PRIORITY GAPS (2-level gaps - High priority):\n')
+
+    const highPriorityGaps = [
+      {
+        objective: 'EDM01: Governance Framework',
+        gap: 2,
+        action: 'Governance maturity improvement program',
+        timeline: 'Q3 2024 - Q2 2025'
+      },
+      {
+        objective: 'APO12: Risk Management',
+        gap: 2,
+        action: 'Advanced risk analytics and automation',
+        timeline: 'Q4 2024 - Q3 2025'
+      },
+      {
+        objective: 'APO13: Security',
+        gap: 2,
+        action: 'Zero trust architecture full implementation',
+        timeline: 'Ongoing through 2025'
+      },
+      {
+        objective: 'APO07: Human Resources',
+        gap: 2,
+        action: 'IT competency framework and talent development',
+        timeline: 'Q3-Q4 2024'
+      }
+    ]
+
+    highPriorityGaps.forEach((gap, idx) => {
+      console.log(`   ${idx + 1}. ${gap.objective} (Gap: ${gap.gap} levels)`)
+      console.log(`      Action: ${gap.action}`)
+      console.log(`      Timeline: ${gap.timeline}\n`)
+    })
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to Roadmap section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.6, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Capability Improvement Roadmap
+    console.log('   🗺️  CAPABILITY IMPROVEMENT ROADMAP:\n')
+
+    console.log('   2024 PRIORITIES:')
+    console.log('   • Q3-Q4: EDM02 (Benefits Delivery)')
+    console.log('   • Q3-Q4: EDM01 (Governance Framework)')
+    console.log('   • Q3-Q4: APO07 (Human Resources)')
+    console.log('   • Q4: MEA01 (Performance Monitoring)\n')
+
+    console.log('   2025 PRIORITIES:')
+    console.log('   • Q1-Q3: APO12 (Risk Management)')
+    console.log('   • Ongoing: APO13 (Security)')
+    console.log('   • Q1-Q2: APO04 (Innovation)')
+    console.log('   • Q2-Q3: BAI04 (Availability and Capacity)\n')
+
+    console.log('   🎯 TARGET: Average capability of 3.5 by end of 2025\n')
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    if (DEMO_MODE) await page.waitForTimeout(wait(2000))
+
+    // Scroll down to SWOT section
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.75, behavior: 'smooth' }))
+    if (DEMO_MODE) await page.waitForTimeout(wait(1500))
+
+    // Assessment Insights
+    console.log('   💡 ASSESSMENT INSIGHTS AND TRENDS:\n')
+
+    console.log('   STRENGTHS ✅:')
+    console.log('   • Strong operational service delivery (DSS domain)')
+    console.log('   • Mature incident and change management')
+    console.log('   • Solid security and compliance foundation')
+    console.log('   • Executive support for governance\n')
+
+    console.log('   WEAKNESSES ⚠️:')
+    console.log('   • Lack of systematic benefits realization')
+    console.log('   • Innovation management immature')
+    console.log('   • Resource optimization needs attention')
+    console.log('   • Stakeholder engagement inconsistent\n')
+
+    console.log('   OPPORTUNITIES 💡:')
+    console.log('   • Leverage automation to scale processes')
+    console.log('   • Cloud capabilities enable rapid maturity gains')
+    console.log('   • GRC platform investment showing ROI')
+    console.log('   • Strong talent pipeline emerging\n')
+
+    console.log('   THREATS ⚠️:')
+    console.log('   • Talent competition limiting capability building')
+    console.log('   • Rapid technology change outpacing process maturity')
+    console.log('   • Regulatory changes requiring continuous adaptation')
+    console.log('   • Budget constraints limiting investment\n')
+
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+    console.log('💾 SAVING ASSESSMENT RESULTS\n')
+
+    const saveButton = page.getByRole('button', { name: /save/i })
+    if (await saveButton.isVisible().catch(() => false)) {
+      await saveButton.scrollIntoViewIfNeeded()
+      await saveButton.click()
+      if (DEMO_MODE) await page.waitForTimeout(wait(3000))
+      console.log('   ✅ Assessment results saved')
+    }
+
+    console.log('\n🎉 ========================================')
+    console.log('   STEP 11 COMPLETED!')
+    console.log('   ========================================')
+    console.log('   ✅ Objectives Assessed: 40')
+    console.log('   ✅ Average Capability: 2.4 (Managed)')
+    console.log('   ✅ Target Capability: 4.0 (Predictable)')
+    console.log('   ✅ Critical Gaps Identified: 2')
+    console.log('   ✅ High-Priority Gaps: 4')
+    console.log('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.log('   📊 Capability Trend: +0.3 improvement')
+    console.log('   🎯 2025 Target: 3.5 average capability')
+    console.log('   ✅ Ready for Performance Analysis')
+    console.log('========================================\n')
+
+    console.log('✨ Demo Step 11 completed successfully!\n')
+  })
+})
