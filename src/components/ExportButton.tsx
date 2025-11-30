@@ -11,6 +11,7 @@ import {
   exportDataAsJSON,
   importDataFromJSON
 } from '../utils/exportExcel'
+import { TEST_IDS } from '../constants/testIds'
 
 interface ExportButtonProps {
   appData: AppData
@@ -69,6 +70,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ appData, updateAppData, var
     return (
       <div className="relative">
         <button
+          data-testid={TEST_IDS.DASHBOARD.EXPORT_BUTTON}
           onClick={() => setShowMenu(!showMenu)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           title="Export Options"
@@ -102,6 +104,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ appData, updateAppData, var
   return (
     <div className="relative">
       <button
+        data-testid={TEST_IDS.DASHBOARD.EXPORT_BUTTON}
         onClick={() => setShowMenu(!showMenu)}
         className="btn-primary flex items-center gap-2"
       >

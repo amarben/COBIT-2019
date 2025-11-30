@@ -8,7 +8,19 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "test:videos:headless": "playwright test tests/demo-videos",
+    "test:videos:generate": "playwright test tests/demo-videos --headed",
+    "test:video:01": "playwright test tests/demo-videos/01-overview-navigation --headed",
+    "test:video:02": "playwright test tests/demo-videos/02-phase1-2-assessment --headed",
+    "test:video:03": "playwright test tests/demo-videos/03-phase3-goals-cascade --headed",
+    "test:video:04": "playwright test tests/demo-videos/04-phase4-5-implementation --headed",
+    "test:video:05": "playwright test tests/demo-videos/05-phase6-7-monitoring --headed",
+    "test:video:01:headless": "playwright test tests/demo-videos/01-overview-navigation",
+    "test:video:02:headless": "playwright test tests/demo-videos/02-phase1-2-assessment",
+    "test:video:03:headless": "playwright test tests/demo-videos/03-phase3-goals-cascade",
+    "test:video:04:headless": "playwright test tests/demo-videos/04-phase4-5-implementation",
+    "test:video:05:headless": "playwright test tests/demo-videos/05-phase6-7-monitoring"
   },
   "dependencies": {
     "jspdf": "^2.5.2",

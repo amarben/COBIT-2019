@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Shield, Save, CheckCircle, Circle, ArrowRight } from 'lucide-react'
+import { Shield, Save, CheckCircle, Circle, ArrowRight, Users } from 'lucide-react'
 import { AppData } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
 import { governanceObjectivesData } from '../data/governanceObjectives'
+import RACIChart from './RACIChart'
 
 interface GovernanceObjectivesProps {
   appData: AppData
@@ -20,6 +21,8 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
       ? appData.governanceObjectives
       : governanceObjectivesData
   )
+  const [activeTab, setActiveTab] = useState<'practices' | 'raci'>('practices')
+  const [selectedRACIObjective, setSelectedRACIObjective] = useState<string | null>(null)
 
   useEffect(() => {
     if (appData.governanceObjectives.length > 0) {
@@ -96,7 +99,87 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
         </div>
       </div>
 
-      {/* Objectives */}
+      {/* Tab Navigation */}
+      <div className="flex border-b border-gray-200">
+        <button
+          onClick={() => setActiveTab('practices')}
+          className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'practices'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Practices
+          </div>
+        </button>
+        <button
+          onClick={() => setActiveTab('raci')}
+          className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'raci'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            RACI Charts
+          </div>
+        </button>
+      </div>
+
+      {/* RACI Tab Content */}
+      {activeTab === 'raci' && (
+        <div className="space-y-4">
+          {/* Objective Selector for RACI */}
+          <div className="card">
+            <h3 className="font-semibold mb-3">Select Objective for RACI Chart</h3>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
+              {objectives.map(obj => (
+                <button
+                  key={obj.id}
+                  onClick={() => setSelectedRACIObjective(obj.id)}
+                  className={`p-3 rounded-lg text-left transition-all ${
+                    selectedRACIObjective === obj.id
+                      ? 'bg-purple-600 text-white'
+                      : obj.enabled
+                      ? 'bg-purple-50 border-2 border-purple-300 hover:border-purple-500'
+                      : 'bg-gray-50 border border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="font-bold text-sm">{obj.id}</div>
+                  <div className={`text-xs ${selectedRACIObjective === obj.id ? 'text-purple-100' : 'text-gray-600'}`}>
+                    {obj.name.length > 30 ? obj.name.substring(0, 30) + '...' : obj.name}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* RACI Chart */}
+          {selectedRACIObjective && (
+            <RACIChart
+              appData={appData}
+              updateAppData={updateAppData}
+              objectiveId={selectedRACIObjective}
+              objectiveName={objectives.find(o => o.id === selectedRACIObjective)?.name}
+              practices={objectives.find(o => o.id === selectedRACIObjective)?.practices || []}
+            />
+          )}
+
+          {!selectedRACIObjective && (
+            <div className="card bg-gray-50 text-center py-12">
+              <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600">Select an objective above to view or edit its RACI chart</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Objectives (Practices Tab) */}
+      {activeTab === 'practices' && (
+      <>
       <div className="space-y-4">
         {filteredObjectives.map((objective) => {
           const practicesImplemented = objective.practices.filter(p => p.implemented).length
@@ -271,6 +354,8 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
           Save Governance Objectives
         </button>
       </div>
+      </>
+      )}
     </div>
   )
 }

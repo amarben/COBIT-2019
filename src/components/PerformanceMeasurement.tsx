@@ -12,7 +12,8 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
   const [metrics, setMetrics] = useState<PerformanceMetric[]>(appData.metrics)
   const [newMetric, setNewMetric] = useState<Partial<PerformanceMetric>>({
     name: '',
-    type: 'kpi',
+    type: 'lag',
+    category: 'kpi',
     objectiveId: '',
     target: 0,
     current: 0,
@@ -30,7 +31,8 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
         {
           id: `M${metrics.length + 1}`,
           name: newMetric.name,
-          type: newMetric.type || 'kpi',
+          type: newMetric.type || 'lag',
+          category: newMetric.category || 'kpi',
           objectiveId: newMetric.objectiveId,
           target: newMetric.target || 0,
           current: newMetric.current || 0,
@@ -39,7 +41,8 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
       ])
       setNewMetric({
         name: '',
-        type: 'kpi',
+        type: 'lag',
+        category: 'kpi',
         objectiveId: '',
         target: 0,
         current: 0,
@@ -78,7 +81,15 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
           />
           <select
             value={newMetric.type}
-            onChange={(e) => setNewMetric({ ...newMetric, type: e.target.value as any })}
+            onChange={(e) => setNewMetric({ ...newMetric, type: e.target.value as 'lag' | 'lead' })}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+          >
+            <option value="lag">Lag Indicator (Outcome)</option>
+            <option value="lead">Lead Indicator (Driver)</option>
+          </select>
+          <select
+            value={newMetric.category}
+            onChange={(e) => setNewMetric({ ...newMetric, category: e.target.value as 'kpi' | 'process-capability' | 'goal' })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
           >
             <option value="kpi">KPI</option>

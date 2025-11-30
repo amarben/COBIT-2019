@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Target, Plus, Trash2, Save } from 'lucide-react'
-import { AppData, EnterpriseContext, EnterpriseGoal, Stakeholder } from '../types'
+import { AppData, EnterpriseContext, EnterpriseGoal, Stakeholder, defaultDesignFactors } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
 
 interface GovernanceContextProps {
@@ -33,16 +33,10 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
       itRole: '',
       challenges: [],
       enterpriseGoals: enterpriseGoalsData,
+      alignmentGoals: [],
       stakeholders: [],
-      designFactors: {
-        enterpriseStrategy: '',
-        enterpriseGoalsAlignment: '',
-        riskProfile: '',
-        itRole: '',
-        complianceRequirements: [],
-        threatLandscape: '',
-        technologyAdoption: ''
-      }
+      designFactors: defaultDesignFactors,
+      selectedFocusAreas: []
     }
   )
 
@@ -153,13 +147,17 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Organization Size
             </label>
-            <input
-              type="text"
+            <select
               value={context.size}
-              onChange={(e) => setContext({ ...context, size: e.target.value })}
-              placeholder="e.g., 5,000 employees, $2B revenue"
+              onChange={(e) => setContext({ ...context, size: e.target.value as EnterpriseContext['size'] })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
+            >
+              <option value="">Select Organization Size...</option>
+              <option value="small">Small - Under 250 employees</option>
+              <option value="medium">Medium - 250-1,000 employees</option>
+              <option value="large">Large - 1,000-10,000 employees</option>
+              <option value="enterprise">Enterprise - Over 10,000 employees</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">IT Role</label>

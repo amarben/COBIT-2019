@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { BarChart3, Save, TrendingUp } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import { BarChart3, Save, TrendingUp, Target, AlertTriangle, CheckCircle2, Info, Zap } from 'lucide-react'
 import { AppData, ProcessCapability } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
 import GapAnalysisChart from './charts/GapAnalysisChart'
 import CapabilityRadarChart from './charts/CapabilityRadarChart'
+import { focusAreas, getFocusArea } from '../data/focusAreas'
 
 interface CapabilityAssessmentProps {
   appData: AppData
@@ -48,10 +49,11 @@ const defaultObjectives = [
   { objectiveId: 'DSS04', domain: 'DSS' as const, name: 'Managed Continuity' },
   { objectiveId: 'DSS05', domain: 'DSS' as const, name: 'Managed Security Services' },
   { objectiveId: 'DSS06', domain: 'DSS' as const, name: 'Managed Business Process Controls' },
-  // MEA - Key objectives (Added MEA02)
+  // MEA - All 4 objectives
   { objectiveId: 'MEA01', domain: 'MEA' as const, name: 'Managed Performance and Conformance Monitoring' },
   { objectiveId: 'MEA02', domain: 'MEA' as const, name: 'Managed System of Internal Control' },
   { objectiveId: 'MEA03', domain: 'MEA' as const, name: 'Managed Compliance with External Requirements' },
+  { objectiveId: 'MEA04', domain: 'MEA' as const, name: 'Managed Assurance' },
 ]
 
 const CapabilityAssessment: React.FC<CapabilityAssessmentProps> = ({ appData, updateAppData }) => {
@@ -66,6 +68,82 @@ const CapabilityAssessment: React.FC<CapabilityAssessmentProps> = ({ appData, up
           gap: 3
         }))
   )
+  const [showFocusAreaPanel, setShowFocusAreaPanel] = useState(true)
+
+  // Get selected focus areas from context
+  const selectedFocusAreaIds = appData.context?.selectedFocusAreas || []
+  const selectedFocusAreas = useMemo(() => {
+    return selectedFocusAreaIds.map(id => getFocusArea(id)).filter(Boolean) as typeof focusAreas
+  }, [selectedFocusAreaIds])
+
+  // Calculate focus area recommendations for each objective
+  const focusAreaRecommendations = useMemo(() => {
+    const recommendations: Record<string, {
+      minimumCapability: number
+      focusAreas: string[]
+      rationale: string[]
+      highest: number
+    }> = {}
+
+    selectedFocusAreas.forEach(fa => {
+      fa.priorityObjectives.forEach(po => {
+        if (!recommendations[po.objectiveId]) {
+          recommendations[po.objectiveId] = {
+            minimumCapability: po.minimumCapability,
+            focusAreas: [fa.name],
+            rationale: [po.rationale],
+            highest: po.minimumCapability
+          }
+        } else {
+          recommendations[po.objectiveId].focusAreas.push(fa.name)
+          recommendations[po.objectiveId].rationale.push(po.rationale)
+          recommendations[po.objectiveId].highest = Math.max(
+            recommendations[po.objectiveId].highest,
+            po.minimumCapability
+          )
+        }
+      })
+    })
+
+    return recommendations
+  }, [selectedFocusAreas])
+
+  // Apply focus area recommendations to targets
+  const applyFocusAreaRecommendations = () => {
+    const updated = capabilities.map(cap => {
+      const rec = focusAreaRecommendations[cap.objectiveId]
+      if (rec && rec.highest > cap.targetLevel) {
+        return {
+          ...cap,
+          targetLevel: rec.highest as 0 | 1 | 2 | 3 | 4 | 5,
+          gap: rec.highest - cap.currentLevel,
+          focusAreaRecommendation: rec.highest,
+          priority: rec.highest >= 4 ? 'high' as const : rec.highest >= 3 ? 'medium' as const : cap.priority
+        }
+      }
+      return {
+        ...cap,
+        focusAreaRecommendation: rec?.highest
+      }
+    })
+    setCapabilities(updated)
+  }
+
+  // Check if any recommendations need to be applied
+  const pendingRecommendations = useMemo(() => {
+    return capabilities.filter(cap => {
+      const rec = focusAreaRecommendations[cap.objectiveId]
+      return rec && rec.highest > cap.targetLevel
+    })
+  }, [capabilities, focusAreaRecommendations])
+
+  // Get objectives below focus area recommendations
+  const objectivesBelowRecommendation = useMemo(() => {
+    return capabilities.filter(cap => {
+      const rec = focusAreaRecommendations[cap.objectiveId]
+      return rec && cap.currentLevel < rec.highest
+    })
+  }, [capabilities, focusAreaRecommendations])
 
   const handleCapabilityChange = (
     index: number,
@@ -137,6 +215,161 @@ const CapabilityAssessment: React.FC<CapabilityAssessmentProps> = ({ appData, up
 
       <DisclaimerBanner />
 
+      {/* Focus Area Recommendations Panel */}
+      {selectedFocusAreas.length > 0 && (
+        <div className="card bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-purple-900">Focus Area Recommendations</h3>
+                <p className="text-sm text-purple-700">
+                  Based on {selectedFocusAreas.length} selected focus area{selectedFocusAreas.length > 1 ? 's' : ''}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowFocusAreaPanel(!showFocusAreaPanel)}
+              className="text-sm text-purple-600 hover:text-purple-800"
+            >
+              {showFocusAreaPanel ? 'Hide Details' : 'Show Details'}
+            </button>
+          </div>
+
+          {showFocusAreaPanel && (
+            <>
+              {/* Selected Focus Areas */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {selectedFocusAreas.map(fa => (
+                  <span
+                    key={fa.id}
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      fa.category === 'industry'
+                        ? 'bg-blue-100 text-blue-800'
+                        : fa.category === 'topic'
+                        ? 'bg-purple-100 text-purple-800'
+                        : 'bg-green-100 text-green-800'
+                    }`}
+                  >
+                    {fa.name}
+                  </span>
+                ))}
+              </div>
+
+              {/* Summary Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-white/70 rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Info className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm font-medium text-purple-800">Objectives with Recommendations</span>
+                  </div>
+                  <div className="text-2xl font-bold text-purple-900">
+                    {Object.keys(focusAreaRecommendations).length}
+                  </div>
+                </div>
+                <div className="bg-white/70 rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-1">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                    <span className="text-sm font-medium text-amber-800">Below Recommended Level</span>
+                  </div>
+                  <div className="text-2xl font-bold text-amber-700">
+                    {objectivesBelowRecommendation.length}
+                  </div>
+                </div>
+                <div className="bg-white/70 rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Zap className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">Pending Target Adjustments</span>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-700">
+                    {pendingRecommendations.length}
+                  </div>
+                </div>
+              </div>
+
+              {/* Apply Recommendations Button */}
+              {pendingRecommendations.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm text-amber-800 mb-3">
+                        <strong>{pendingRecommendations.length} objective{pendingRecommendations.length > 1 ? 's have' : ' has'} target levels below focus area recommendations.</strong>{' '}
+                        Click below to automatically adjust targets to meet minimum requirements.
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {pendingRecommendations.slice(0, 5).map(cap => {
+                          const rec = focusAreaRecommendations[cap.objectiveId]
+                          return (
+                            <span key={cap.objectiveId} className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
+                              {cap.objectiveId}: {cap.targetLevel} → {rec?.highest}
+                            </span>
+                          )
+                        })}
+                        {pendingRecommendations.length > 5 && (
+                          <span className="text-xs text-amber-700">+{pendingRecommendations.length - 5} more</span>
+                        )}
+                      </div>
+                      <button
+                        onClick={applyFocusAreaRecommendations}
+                        className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm font-medium flex items-center gap-2"
+                      >
+                        <Zap className="w-4 h-4" />
+                        Apply Focus Area Recommendations
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {pendingRecommendations.length === 0 && objectivesBelowRecommendation.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-blue-800">
+                        <strong>Targets are aligned with focus area recommendations.</strong>{' '}
+                        {objectivesBelowRecommendation.length} objective{objectivesBelowRecommendation.length > 1 ? 's are' : ' is'} currently below the recommended capability level and {objectivesBelowRecommendation.length > 1 ? 'require' : 'requires'} improvement.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {objectivesBelowRecommendation.length === 0 && Object.keys(focusAreaRecommendations).length > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-green-800">
+                      <strong>All focus area objectives are meeting recommended capability levels!</strong>{' '}
+                      Your organization is well-positioned for the selected focus areas.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* No Focus Areas Selected */}
+      {selectedFocusAreas.length === 0 && (
+        <div className="card bg-gray-50 border-gray-200">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-gray-700">
+                <strong>No focus areas selected.</strong>{' '}
+                Select focus areas in the Governance Design section to get tailored capability recommendations
+                for your organization's specific needs (e.g., Cybersecurity, Cloud, SME, Healthcare).
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Capability Level Reference */}
       <div className="card">
         <h3 className="text-lg font-semibold mb-4">Process Capability Levels (COBIT 2019)</h3>
@@ -192,100 +425,165 @@ const CapabilityAssessment: React.FC<CapabilityAssessmentProps> = ({ appData, up
               <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700">Objective</th>
               <th className="text-center py-3 px-2 text-sm font-semibold text-gray-700">Current</th>
               <th className="text-center py-3 px-2 text-sm font-semibold text-gray-700">Target</th>
+              {selectedFocusAreas.length > 0 && (
+                <th className="text-center py-3 px-2 text-sm font-semibold text-purple-700">
+                  <div className="flex items-center justify-center gap-1">
+                    <Target className="w-4 h-4" />
+                    Rec.
+                  </div>
+                </th>
+              )}
               <th className="text-center py-3 px-2 text-sm font-semibold text-gray-700">Gap</th>
               <th className="text-center py-3 px-2 text-sm font-semibold text-gray-700">Priority</th>
               <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700">Rationale</th>
             </tr>
           </thead>
           <tbody>
-            {capabilities.map((capability, index) => (
-              <tr key={capability.objectiveId} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-3 px-2">
-                  <span
-                    className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      capability.domain === 'EDM'
-                        ? 'bg-purple-100 text-purple-700'
-                        : capability.domain === 'APO'
-                        ? 'bg-blue-100 text-blue-700'
-                        : capability.domain === 'BAI'
-                        ? 'bg-green-100 text-green-700'
-                        : capability.domain === 'DSS'
-                        ? 'bg-orange-100 text-orange-700'
-                        : 'bg-indigo-100 text-indigo-700'
-                    }`}
-                  >
-                    {capability.domain}
-                  </span>
-                </td>
-                <td className="py-3 px-2">
-                  <div className="text-sm font-medium text-gray-900">{capability.objectiveId}</div>
-                  <div className="text-xs text-gray-600">{capability.name}</div>
-                </td>
-                <td className="py-3 px-2 text-center">
-                  <select
-                    value={capability.currentLevel}
-                    onChange={(e) =>
-                      handleCapabilityChange(index, 'currentLevel', parseInt(e.target.value))
-                    }
-                    className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  >
-                    {[0, 1, 2, 3, 4, 5].map(level => (
-                      <option key={level} value={level}>
-                        {level}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td className="py-3 px-2 text-center">
-                  <select
-                    value={capability.targetLevel}
-                    onChange={(e) =>
-                      handleCapabilityChange(index, 'targetLevel', parseInt(e.target.value))
-                    }
-                    className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  >
-                    {[0, 1, 2, 3, 4, 5].map(level => (
-                      <option key={level} value={level}>
-                        {level}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td className="py-3 px-2 text-center">
-                  <span
-                    className={`inline-block px-2 py-1 rounded text-sm font-medium ${
-                      capability.gap > 2
-                        ? 'bg-red-100 text-red-700'
-                        : capability.gap > 0
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-green-100 text-green-700'
-                    }`}
-                  >
-                    {capability.gap > 0 ? `+${capability.gap}` : capability.gap}
-                  </span>
-                </td>
-                <td className="py-3 px-2 text-center">
-                  <select
-                    value={capability.priority}
-                    onChange={(e) => handleCapabilityChange(index, 'priority', e.target.value)}
-                    className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  >
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                  </select>
-                </td>
-                <td className="py-3 px-2">
-                  <textarea
-                    value={capability.rationale || ''}
-                    onChange={(e) => handleCapabilityChange(index, 'rationale', e.target.value)}
-                    placeholder="Enter assessment rationale..."
-                    className="w-full min-w-[300px] px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-y"
-                    rows={2}
-                  />
-                </td>
-              </tr>
-            ))}
+            {capabilities.map((capability, index) => {
+              const rec = focusAreaRecommendations[capability.objectiveId]
+              const isBelowRecommendation = rec && capability.currentLevel < rec.highest
+              const hasRecommendation = !!rec
+
+              return (
+                <tr
+                  key={capability.objectiveId}
+                  className={`border-b border-gray-100 hover:bg-gray-50 ${
+                    isBelowRecommendation ? 'bg-amber-50/50' : ''
+                  }`}
+                >
+                  <td className="py-3 px-2">
+                    <span
+                      className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                        capability.domain === 'EDM'
+                          ? 'bg-purple-100 text-purple-700'
+                          : capability.domain === 'APO'
+                          ? 'bg-blue-100 text-blue-700'
+                          : capability.domain === 'BAI'
+                          ? 'bg-green-100 text-green-700'
+                          : capability.domain === 'DSS'
+                          ? 'bg-orange-100 text-orange-700'
+                          : 'bg-indigo-100 text-indigo-700'
+                      }`}
+                    >
+                      {capability.domain}
+                    </span>
+                  </td>
+                  <td className="py-3 px-2">
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-gray-900">{capability.objectiveId}</div>
+                        <div className="text-xs text-gray-600">{capability.name}</div>
+                        {hasRecommendation && (
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {rec.focusAreas.map((fa, i) => (
+                              <span
+                                key={i}
+                                className="inline-block text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700"
+                                title={rec.rationale[i]}
+                              >
+                                {fa}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {isBelowRecommendation && (
+                        <span title="Below focus area recommendation">
+                          <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <select
+                      value={capability.currentLevel}
+                      onChange={(e) =>
+                        handleCapabilityChange(index, 'currentLevel', parseInt(e.target.value))
+                      }
+                      className={`px-2 py-1 border rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+                        isBelowRecommendation ? 'border-amber-400 bg-amber-50' : 'border-gray-300'
+                      }`}
+                    >
+                      {[0, 1, 2, 3, 4, 5].map(level => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <select
+                      value={capability.targetLevel}
+                      onChange={(e) =>
+                        handleCapabilityChange(index, 'targetLevel', parseInt(e.target.value))
+                      }
+                      className={`px-2 py-1 border rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+                        rec && capability.targetLevel < rec.highest ? 'border-amber-400 bg-amber-50' : 'border-gray-300'
+                      }`}
+                    >
+                      {[0, 1, 2, 3, 4, 5].map(level => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  {selectedFocusAreas.length > 0 && (
+                    <td className="py-3 px-2 text-center">
+                      {rec ? (
+                        <span
+                          className={`inline-block px-2 py-1 rounded text-sm font-medium ${
+                            capability.currentLevel >= rec.highest
+                              ? 'bg-green-100 text-green-700'
+                              : capability.targetLevel >= rec.highest
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-amber-100 text-amber-700'
+                          }`}
+                          title={rec.rationale.join('; ')}
+                        >
+                          {rec.highest}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">-</span>
+                      )}
+                    </td>
+                  )}
+                  <td className="py-3 px-2 text-center">
+                    <span
+                      className={`inline-block px-2 py-1 rounded text-sm font-medium ${
+                        capability.gap > 2
+                          ? 'bg-red-100 text-red-700'
+                          : capability.gap > 0
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-green-100 text-green-700'
+                      }`}
+                    >
+                      {capability.gap > 0 ? `+${capability.gap}` : capability.gap}
+                    </span>
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <select
+                      value={capability.priority}
+                      onChange={(e) => handleCapabilityChange(index, 'priority', e.target.value)}
+                      className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </td>
+                  <td className="py-3 px-2">
+                    <textarea
+                      value={capability.rationale || ''}
+                      onChange={(e) => handleCapabilityChange(index, 'rationale', e.target.value)}
+                      placeholder={rec ? rec.rationale[0] : "Enter assessment rationale..."}
+                      className="w-full min-w-[250px] px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-y"
+                      rows={2}
+                    />
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

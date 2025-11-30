@@ -1,6 +1,6 @@
-import React from 'react'
-import { Eye, Shield, AlertTriangle, CheckCircle, TrendingUp, Activity } from 'lucide-react'
-import { AppData } from '../types'
+import React, { useState, useMemo } from 'react'
+import { Eye, TrendingUp, AlertCircle, CheckCircle2, Download, Plus, Trash2, Edit2, Activity, Shield, BarChart3, FileText } from 'lucide-react'
+import { AppData, PerformanceMetric } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
 
 interface ContinuousMonitoringProps {
@@ -8,439 +8,811 @@ interface ContinuousMonitoringProps {
   updateAppData: (updates: Partial<AppData>) => void
 }
 
-const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = () => {
-  // TechCorp Financial Services Monitoring Data - Q2 2024
+// TechCorp example monitoring data
+const TECHCORP_MONITORING_DATA: PerformanceMetric[] = [
+  // Governance Performance Metrics
+  {
+    id: '1',
+    objectiveId: 'EDM01',
+    name: 'Board Meetings Held',
+    category: 'lag',
+    targetValue: 12,
+    currentValue: 11,
+    unit: 'meetings/year',
+    frequency: 'monthly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '2',
+    objectiveId: 'EDM01',
+    name: 'Governance Policy Compliance Rate',
+    category: 'lag',
+    targetValue: 95,
+    currentValue: 92,
+    unit: '%',
+    frequency: 'quarterly',
+    status: 'at-risk',
+    trend: 'stable'
+  },
+  {
+    id: '3',
+    objectiveId: 'EDM02',
+    name: 'IT Investment ROI',
+    category: 'lag',
+    targetValue: 18,
+    currentValue: 16.5,
+    unit: '%',
+    frequency: 'quarterly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '4',
+    objectiveId: 'EDM02',
+    name: 'Benefits Realization Rate',
+    category: 'lag',
+    targetValue: 85,
+    currentValue: 78,
+    unit: '%',
+    frequency: 'quarterly',
+    status: 'at-risk',
+    trend: 'declining'
+  },
+  {
+    id: '5',
+    objectiveId: 'EDM03',
+    name: 'Critical Incidents',
+    category: 'lag',
+    targetValue: 0,
+    currentValue: 2,
+    unit: 'incidents/quarter',
+    frequency: 'monthly',
+    status: 'critical',
+    trend: 'stable'
+  },
+  {
+    id: '6',
+    objectiveId: 'EDM03',
+    name: 'Risk Assessment Coverage',
+    category: 'lead',
+    targetValue: 100,
+    currentValue: 95,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '7',
+    objectiveId: 'EDM04',
+    name: 'IT Budget Variance',
+    category: 'lag',
+    targetValue: 5,
+    currentValue: 3.2,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '8',
+    objectiveId: 'EDM04',
+    name: 'Resource Utilization Rate',
+    category: 'lag',
+    targetValue: 85,
+    currentValue: 87,
+    unit: '%',
+    frequency: 'weekly',
+    status: 'on-track',
+    trend: 'stable'
+  },
+  {
+    id: '9',
+    objectiveId: 'EDM05',
+    name: 'Stakeholder Satisfaction Score',
+    category: 'lag',
+    targetValue: 4.5,
+    currentValue: 4.2,
+    unit: 'score (1-5)',
+    frequency: 'quarterly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '10',
+    objectiveId: 'EDM05',
+    name: 'Communication Effectiveness',
+    category: 'lead',
+    targetValue: 90,
+    currentValue: 88,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'on-track',
+    trend: 'stable'
+  },
+  // APO Metrics
+  {
+    id: '11',
+    objectiveId: 'APO01',
+    name: 'IT Strategy Alignment Score',
+    category: 'lag',
+    targetValue: 4.0,
+    currentValue: 3.8,
+    unit: 'score (1-5)',
+    frequency: 'quarterly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '12',
+    objectiveId: 'APO02',
+    name: 'Architecture Compliance Rate',
+    category: 'lag',
+    targetValue: 95,
+    currentValue: 91,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'at-risk',
+    trend: 'stable'
+  },
+  {
+    id: '13',
+    objectiveId: 'APO07',
+    name: 'Staff Competency Level',
+    category: 'lead',
+    targetValue: 4.0,
+    currentValue: 3.7,
+    unit: 'score (1-5)',
+    frequency: 'quarterly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  // BAI Metrics
+  {
+    id: '14',
+    objectiveId: 'BAI02',
+    name: 'Requirements Traceability',
+    category: 'lead',
+    targetValue: 100,
+    currentValue: 94,
+    unit: '%',
+    frequency: 'per-project',
+    status: 'on-track',
+    trend: 'stable'
+  },
+  {
+    id: '15',
+    objectiveId: 'BAI03',
+    name: 'Solution Delivery On-Time Rate',
+    category: 'lag',
+    targetValue: 90,
+    currentValue: 85,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'at-risk',
+    trend: 'declining'
+  },
+  {
+    id: '16',
+    objectiveId: 'BAI06',
+    name: 'Change Success Rate',
+    category: 'lag',
+    targetValue: 98,
+    currentValue: 96,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'on-track',
+    trend: 'stable'
+  },
+  // DSS Metrics
+  {
+    id: '17',
+    objectiveId: 'DSS01',
+    name: 'Service Availability',
+    category: 'lag',
+    targetValue: 99.9,
+    currentValue: 99.7,
+    unit: '%',
+    frequency: 'daily',
+    status: 'on-track',
+    trend: 'stable'
+  },
+  {
+    id: '18',
+    objectiveId: 'DSS02',
+    name: 'Incident Resolution Time',
+    category: 'lag',
+    targetValue: 4,
+    currentValue: 5.2,
+    unit: 'hours',
+    frequency: 'daily',
+    status: 'at-risk',
+    trend: 'stable'
+  },
+  {
+    id: '19',
+    objectiveId: 'DSS05',
+    name: 'Security Incident Response Time',
+    category: 'lag',
+    targetValue: 2,
+    currentValue: 1.8,
+    unit: 'hours',
+    frequency: 'daily',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  // MEA Metrics
+  {
+    id: '20',
+    objectiveId: 'MEA01',
+    name: 'Compliance Audit Findings',
+    category: 'lag',
+    targetValue: 0,
+    currentValue: 3,
+    unit: 'findings',
+    frequency: 'quarterly',
+    status: 'at-risk',
+    trend: 'stable'
+  },
+  {
+    id: '21',
+    objectiveId: 'MEA02',
+    name: 'Internal Control Effectiveness',
+    category: 'lag',
+    targetValue: 95,
+    currentValue: 93,
+    unit: '%',
+    frequency: 'quarterly',
+    status: 'on-track',
+    trend: 'improving'
+  },
+  {
+    id: '22',
+    objectiveId: 'MEA03',
+    name: 'Regulatory Compliance Rate',
+    category: 'lag',
+    targetValue: 100,
+    currentValue: 98,
+    unit: '%',
+    frequency: 'monthly',
+    status: 'at-risk',
+    trend: 'stable'
+  }
+]
 
-  const governanceMetrics = [
-    { metric: 'Governance Effectiveness Score', value: '3.2 / 5.0', target: '4.0', status: 'yellow' },
-    { metric: 'IT Steering Committee Attendance', value: '95%', target: '90%', status: 'green' },
-    { metric: 'Governance Policy Compliance', value: '92%', target: '100%', status: 'yellow' },
-    { metric: 'Escalated Issues Resolved', value: '18 of 22 (82%)', target: '100%', status: 'yellow' },
-    { metric: 'Governance Training Completion', value: '87%', target: '100%', status: 'yellow' }
-  ]
+const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, updateAppData }) => {
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'on-track' | 'at-risk' | 'critical'>('all')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [formData, setFormData] = useState<Partial<PerformanceMetric>>({})
 
-  const topRisks = [
-    {
-      risk: 'Cybersecurity Breach Risk',
-      inherent: 'High',
-      residual: 'Medium',
-      mitigations: 'Zero trust, SIEM, SOC, security training',
-      trend: 'Stable'
-    },
-    {
-      risk: 'Cloud Migration Complexity',
-      inherent: 'High',
-      residual: 'Medium',
-      mitigations: 'CCoE, architecture reviews, testing',
-      trend: 'Increasing ↑'
-    },
-    {
-      risk: 'Regulatory Compliance',
-      inherent: 'High',
-      residual: 'Low',
-      mitigations: 'GRC system, continuous monitoring, legal reviews',
-      trend: 'Stable'
-    },
-    {
-      risk: 'Talent Retention',
-      inherent: 'Medium',
-      residual: 'Medium',
-      mitigations: 'Compensation reviews, development programs',
-      trend: 'Increasing ↑'
-    },
-    {
-      risk: 'Legacy System Technical Debt',
-      inherent: 'High',
-      residual: 'Medium',
-      mitigations: 'Modernization roadmap, risk-based prioritization',
-      trend: 'Decreasing ↓'
-    }
-  ]
+  const hasUserData = appData.metrics && appData.metrics.length > 0
 
-  const complianceStatus = [
-    {
-      regulation: 'SOX IT Controls',
-      status: '98% effective',
-      statusColor: 'yellow',
-      notes: '2 minor deficiencies in remediation'
-    },
-    {
-      regulation: 'GDPR Compliance',
-      status: '96% compliant',
-      statusColor: 'yellow',
-      notes: 'Data mapping ongoing'
-    },
-    {
-      regulation: 'PCI-DSS',
-      status: '100% compliant',
-      statusColor: 'green',
-      notes: 'Validated Q1 2024'
-    },
-    {
-      regulation: 'NYDFS Cybersecurity',
-      status: '94% compliant',
-      statusColor: 'yellow',
-      notes: '4 open items'
-    },
-    {
-      regulation: 'ISO 27001 Readiness',
-      status: '92% ready',
-      statusColor: 'yellow',
-      notes: 'Certification audit Q4 2024'
-    }
-  ]
-
-  const balancedScorecard = {
-    stakeholder: [
-      { metric: 'Stakeholder Satisfaction', value: '3.8/5.0', target: '4.2', status: 'yellow' },
-      { metric: 'Benefits Realization', value: '62%', target: '85%', status: 'red' },
-      { metric: 'Strategic Alignment', value: '88%', target: '90%', status: 'yellow' }
-    ],
-    financial: [
-      { metric: 'IT Budget Variance', value: '+8%', target: '±5%', status: 'red' },
-      { metric: 'Cost Optimization', value: '6% reduction', target: '10%', status: 'yellow' },
-      { metric: 'Portfolio ROI', value: '12%', target: '15%', status: 'yellow' }
-    ],
-    process: [
-      { metric: 'Change Success Rate', value: '92%', target: '95%', status: 'yellow' },
-      { metric: 'Incident Resolution (P1)', value: '5.2 hours', target: '4 hours', status: 'red' },
-      { metric: 'Project On-Time Delivery', value: '73%', target: '85%', status: 'red' }
-    ],
-    learning: [
-      { metric: 'Employee Satisfaction', value: '3.9/5.0', target: '4.2', status: 'yellow' },
-      { metric: 'Training Completion', value: '87%', target: '95%', status: 'yellow' },
-      { metric: 'Certifications', value: '32 of 50', target: '50', status: 'yellow' },
-      { metric: 'Turnover Rate', value: '14%', target: '<10%', status: 'red' }
-    ]
+  const loadExample = () => {
+    updateAppData({ metrics: TECHCORP_MONITORING_DATA })
   }
 
-  const monitoringTools = [
-    { name: 'ServiceNow GRC Dashboards', capabilities: 'Risk dashboards, compliance status, policy exceptions, audit findings' },
-    { name: 'PowerBI Performance Dashboards', capabilities: 'IT Balanced Scorecard, portfolio performance, financial metrics' },
-    { name: 'Splunk Security Monitoring', capabilities: 'Real-time security events, threat intelligence, compliance reporting' },
-    { name: 'Dynatrace APM', capabilities: 'Application performance, user experience, automated problem detection' },
-    { name: 'CloudHealth Cloud Governance', capabilities: 'Multi-cloud cost, policy compliance, resource optimization' }
-  ]
+  const displayData = hasUserData ? appData.metrics : []
 
-  const getStatusColor = (status: string) => {
+  // Calculate monitoring metrics
+  const monitoringMetrics = useMemo(() => {
+    if (displayData.length === 0) return null
+
+    const totalMetrics = displayData.length
+    const onTrack = displayData.filter(m => m.status === 'on-track').length
+    const atRisk = displayData.filter(m => m.status === 'at-risk').length
+    const critical = displayData.filter(m => m.status === 'critical').length
+
+    const improving = displayData.filter(m => m.trend === 'improving').length
+    const stable = displayData.filter(m => m.trend === 'stable').length
+    const declining = displayData.filter(m => m.trend === 'declining').length
+
+    const healthScore = ((onTrack / totalMetrics) * 100).toFixed(0)
+
+    // Group by objective
+    const byObjective = displayData.reduce((acc, m) => {
+      if (!acc[m.objectiveId]) {
+        acc[m.objectiveId] = []
+      }
+      acc[m.objectiveId].push(m)
+      return acc
+    }, {} as Record<string, PerformanceMetric[]>)
+
+    // Find objectives with issues
+    const objectivesAtRisk = Object.entries(byObjective)
+      .filter(([_, metrics]) => metrics.some(m => m.status === 'at-risk' || m.status === 'critical'))
+      .map(([objectiveId]) => objectiveId)
+
+    return {
+      totalMetrics,
+      onTrack,
+      atRisk,
+      critical,
+      improving,
+      stable,
+      declining,
+      healthScore,
+      objectivesAtRisk
+    }
+  }, [displayData])
+
+  const filteredData = useMemo(() => {
+    if (selectedFilter === 'all') return displayData
+    return displayData.filter(m => m.status === selectedFilter)
+  }, [displayData, selectedFilter])
+
+  const getStatusColor = (status: PerformanceMetric['status']): string => {
     switch (status) {
-      case 'green': return 'text-green-600'
-      case 'yellow': return 'text-yellow-600'
-      case 'red': return 'text-red-600'
-      default: return 'text-gray-600'
+      case 'on-track': return 'bg-green-100 text-green-800 border-green-300'
+      case 'at-risk': return 'bg-orange-100 text-orange-800 border-orange-300'
+      case 'critical': return 'bg-red-100 text-red-800 border-red-300'
+      default: return 'bg-gray-100 text-gray-800 border-gray-300'
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'green': return 'bg-green-100 text-green-800'
-      case 'yellow': return 'bg-yellow-100 text-yellow-800'
-      case 'red': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+  const getTrendIcon = (trend: PerformanceMetric['trend']) => {
+    switch (trend) {
+      case 'improving': return <TrendingUp className="w-4 h-4 text-green-600" />
+      case 'declining': return <TrendingUp className="w-4 h-4 text-red-600 rotate-180" />
+      default: return <Activity className="w-4 h-4 text-gray-600" />
     }
+  }
+
+  const handleAdd = () => {
+    setFormData({
+      objectiveId: '',
+      name: '',
+      category: 'lag',
+      targetValue: 0,
+      currentValue: 0,
+      unit: '',
+      frequency: 'monthly',
+      status: 'on-track',
+      trend: 'stable'
+    })
+    setEditingId('new')
+  }
+
+  const handleEdit = (metric: PerformanceMetric) => {
+    setFormData(metric)
+    setEditingId(metric.id)
+  }
+
+  const handleSave = () => {
+    if (editingId === 'new') {
+      const newMetric: PerformanceMetric = {
+        ...formData as PerformanceMetric,
+        id: Date.now().toString()
+      }
+      updateAppData({ metrics: [...displayData, newMetric] })
+    } else {
+      updateAppData({
+        metrics: displayData.map(m => m.id === editingId ? { ...formData as PerformanceMetric } : m)
+      })
+    }
+    setEditingId(null)
+    setFormData({})
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Delete this metric?')) {
+      updateAppData({ metrics: displayData.filter(m => m.id !== id) })
+    }
+  }
+
+  const handleCancel = () => {
+    setEditingId(null)
+    setFormData({})
   }
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <div className="gradient-teal text-white p-6 rounded-xl">
+      <div className="gradient-emerald text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
           <Eye className="w-8 h-8" />
           <h1 className="text-3xl font-bold">Continuous Monitoring</h1>
         </div>
-        <p className="text-teal-100">Real-time governance dashboards and monitoring</p>
-        <p className="text-teal-200 text-sm mt-2">TechCorp Financial Services - Q2 2024 Status</p>
+        <p className="text-emerald-100">Monitor governance performance and compliance in real-time</p>
+        {monitoringMetrics && (
+          <p className="text-emerald-200 text-sm mt-2">
+            Health Score: {monitoringMetrics.healthScore}% • {monitoringMetrics.totalMetrics} Metrics Tracked
+          </p>
+        )}
       </div>
 
       <DisclaimerBanner />
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-6 h-6 text-purple-600" />
-            <h3 className="font-semibold">Governance</h3>
+      {/* Empty State */}
+      {!hasUserData && (
+        <div className="card bg-emerald-50 border-emerald-200 text-center py-12">
+          <Eye className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-emerald-900 mb-2">No Monitoring Data Yet</h3>
+          <p className="text-emerald-700 mb-6 max-w-2xl mx-auto">
+            Set up continuous monitoring to track governance performance metrics and ensure objectives are met.
+          </p>
+          <div className="flex justify-center gap-3">
+            <button onClick={loadExample} className="btn-secondary">
+              <Download className="w-4 h-4" />
+              Load TechCorp Example
+            </button>
+            <button onClick={handleAdd} className="btn-primary">
+              <Plus className="w-4 h-4" />
+              Add First Metric
+            </button>
           </div>
-          <div className="text-2xl font-bold text-purple-600">5 Metrics</div>
-          <div className="text-sm text-gray-600">Active monitoring</div>
         </div>
+      )}
 
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <AlertTriangle className="w-6 h-6 text-orange-600" />
-            <h3 className="font-semibold">Risks</h3>
+      {/* Monitoring Dashboard */}
+      {hasUserData && monitoringMetrics && (
+        <>
+          {/* Health Overview */}
+          <div className="card">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-emerald-600" />
+              Governance Health Overview
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="p-4 bg-emerald-50 rounded-lg">
+                <div className="text-sm text-emerald-700 mb-1">Overall Health</div>
+                <div className="text-3xl font-bold text-emerald-900">{monitoringMetrics.healthScore}%</div>
+                <div className="text-xs text-emerald-600 mt-1">{monitoringMetrics.onTrack} on track</div>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <div className="text-sm text-green-700 mb-1">On Track</div>
+                <div className="text-3xl font-bold text-green-900">{monitoringMetrics.onTrack}</div>
+                <div className="text-xs text-green-600 mt-1">Meeting targets</div>
+              </div>
+              <div className="p-4 bg-orange-50 rounded-lg">
+                <div className="text-sm text-orange-700 mb-1">At Risk</div>
+                <div className="text-3xl font-bold text-orange-900">{monitoringMetrics.atRisk}</div>
+                <div className="text-xs text-orange-600 mt-1">Needs attention</div>
+              </div>
+              <div className="p-4 bg-red-50 rounded-lg">
+                <div className="text-sm text-red-700 mb-1">Critical</div>
+                <div className="text-3xl font-bold text-red-900">{monitoringMetrics.critical}</div>
+                <div className="text-xs text-red-600 mt-1">Immediate action</div>
+              </div>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-orange-600">45 Total</div>
-          <div className="text-sm text-gray-600">8 high, 22 medium, 15 low</div>
-        </div>
 
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <CheckCircle className="w-6 h-6 text-blue-600" />
-            <h3 className="font-semibold">Compliance</h3>
+          {/* Trend Analysis */}
+          <div className="card">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <TrendingUp className="w-6 h-6 text-emerald-600" />
+              Performance Trends
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <span className="font-semibold text-green-900">Improving</span>
+                </div>
+                <div className="text-2xl font-bold text-green-900">{monitoringMetrics.improving}</div>
+                <div className="text-xs text-green-700 mt-1">Metrics trending upward</div>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Activity className="w-5 h-5 text-gray-600" />
+                  <span className="font-semibold text-gray-900">Stable</span>
+                </div>
+                <div className="text-2xl font-bold text-gray-900">{monitoringMetrics.stable}</div>
+                <div className="text-xs text-gray-700 mt-1">Metrics holding steady</div>
+              </div>
+              <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="w-5 h-5 text-red-600 rotate-180" />
+                  <span className="font-semibold text-red-900">Declining</span>
+                </div>
+                <div className="text-2xl font-bold text-red-900">{monitoringMetrics.declining}</div>
+                <div className="text-xs text-red-700 mt-1">Metrics trending downward</div>
+              </div>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-blue-600">5 Regulations</div>
-          <div className="text-sm text-gray-600">Actively tracked</div>
-        </div>
 
-        <div className="card">
-          <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="w-6 h-6 text-green-600" />
-            <h3 className="font-semibold">Performance</h3>
+          {/* Objectives at Risk */}
+          {monitoringMetrics.objectivesAtRisk.length > 0 && (
+            <div className="card bg-orange-50 border-orange-200">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-orange-900">
+                <AlertCircle className="w-6 h-6 text-orange-600" />
+                Objectives Requiring Attention
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {monitoringMetrics.objectivesAtRisk.map(objId => (
+                  <span key={objId} className="px-3 py-1 bg-orange-100 text-orange-800 border border-orange-300 rounded-lg text-sm font-semibold">
+                    {objId}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Filters and Actions */}
+          <div className="card">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <FileText className="w-6 h-6 text-emerald-600" />
+                Performance Metrics ({filteredData.length})
+              </h2>
+              <button onClick={handleAdd} className="btn-primary">
+                <Plus className="w-4 h-4" />
+                Add Metric
+              </button>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex gap-2 mb-4 border-b border-gray-200">
+              {(['all', 'on-track', 'at-risk', 'critical'] as const).map(filter => (
+                <button
+                  key={filter}
+                  onClick={() => setSelectedFilter(filter)}
+                  className={`px-4 py-2 font-medium text-sm transition-colors ${
+                    selectedFilter === filter
+                      ? 'text-emerald-600 border-b-2 border-emerald-600'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {filter === 'all' ? 'All' : filter === 'on-track' ? 'On Track' : filter === 'at-risk' ? 'At Risk' : 'Critical'}
+                </button>
+              ))}
+            </div>
+
+            {/* Metrics List */}
+            <div className="space-y-3">
+              {filteredData.map(metric => (
+                <div key={metric.id} className={`p-4 rounded-lg border ${getStatusColor(metric.status)}`}>
+                  {editingId === metric.id ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          value={formData.objectiveId || ''}
+                          onChange={e => setFormData({ ...formData, objectiveId: e.target.value })}
+                          placeholder="Objective ID (e.g., EDM01)"
+                          className="input"
+                        />
+                        <input
+                          type="text"
+                          value={formData.name || ''}
+                          onChange={e => setFormData({ ...formData, name: e.target.value })}
+                          placeholder="Metric name"
+                          className="input"
+                        />
+                        <select
+                          value={formData.category || 'lag'}
+                          onChange={e => setFormData({ ...formData, category: e.target.value as 'lag' | 'lead' })}
+                          className="input"
+                        >
+                          <option value="lag">Lag Indicator</option>
+                          <option value="lead">Lead Indicator</option>
+                        </select>
+                        <select
+                          value={formData.frequency || 'monthly'}
+                          onChange={e => setFormData({ ...formData, frequency: e.target.value as any })}
+                          className="input"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="quarterly">Quarterly</option>
+                          <option value="per-project">Per Project</option>
+                        </select>
+                        <input
+                          type="number"
+                          value={formData.targetValue || 0}
+                          onChange={e => setFormData({ ...formData, targetValue: parseFloat(e.target.value) })}
+                          placeholder="Target value"
+                          className="input"
+                        />
+                        <input
+                          type="number"
+                          value={formData.currentValue || 0}
+                          onChange={e => setFormData({ ...formData, currentValue: parseFloat(e.target.value) })}
+                          placeholder="Current value"
+                          className="input"
+                        />
+                        <input
+                          type="text"
+                          value={formData.unit || ''}
+                          onChange={e => setFormData({ ...formData, unit: e.target.value })}
+                          placeholder="Unit (e.g., %, hours)"
+                          className="input"
+                        />
+                        <select
+                          value={formData.status || 'on-track'}
+                          onChange={e => setFormData({ ...formData, status: e.target.value as any })}
+                          className="input"
+                        >
+                          <option value="on-track">On Track</option>
+                          <option value="at-risk">At Risk</option>
+                          <option value="critical">Critical</option>
+                        </select>
+                        <select
+                          value={formData.trend || 'stable'}
+                          onChange={e => setFormData({ ...formData, trend: e.target.value as any })}
+                          className="input"
+                        >
+                          <option value="improving">Improving</option>
+                          <option value="stable">Stable</option>
+                          <option value="declining">Declining</option>
+                        </select>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={handleSave} className="btn-primary">Save</button>
+                        <button onClick={handleCancel} className="btn-secondary">Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="px-2 py-0.5 bg-gray-700 text-white rounded text-xs font-bold">
+                              {metric.objectiveId}
+                            </span>
+                            <span className="px-2 py-0.5 bg-white bg-opacity-50 rounded text-xs font-medium">
+                              {metric.category === 'lag' ? 'Lag Indicator' : 'Lead Indicator'}
+                            </span>
+                          </div>
+                          <h3 className="font-bold text-lg">{metric.name}</h3>
+                          <div className="text-sm mt-1">Frequency: {metric.frequency}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getTrendIcon(metric.trend)}
+                          <button onClick={() => handleEdit(metric)} className="p-2 hover:bg-white hover:bg-opacity-50 rounded transition-colors">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleDelete(metric.id)} className="p-2 hover:bg-white hover:bg-opacity-50 rounded transition-colors text-red-600">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 mt-3">
+                        <div>
+                          <div className="text-xs opacity-75">Target</div>
+                          <div className="text-xl font-bold">{metric.targetValue} {metric.unit}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs opacity-75">Current</div>
+                          <div className="text-xl font-bold">{metric.currentValue} {metric.unit}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs opacity-75">Achievement</div>
+                          <div className="text-xl font-bold">
+                            {metric.targetValue > 0 ? ((metric.currentValue / metric.targetValue) * 100).toFixed(0) : 0}%
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+
+              {editingId === 'new' && (
+                <div className="p-4 rounded-lg border border-emerald-300 bg-emerald-50">
+                  <h3 className="font-bold mb-3">Add New Metric</h3>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        type="text"
+                        value={formData.objectiveId || ''}
+                        onChange={e => setFormData({ ...formData, objectiveId: e.target.value })}
+                        placeholder="Objective ID (e.g., EDM01)"
+                        className="input"
+                      />
+                      <input
+                        type="text"
+                        value={formData.name || ''}
+                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Metric name"
+                        className="input"
+                      />
+                      <select
+                        value={formData.category || 'lag'}
+                        onChange={e => setFormData({ ...formData, category: e.target.value as 'lag' | 'lead' })}
+                        className="input"
+                      >
+                        <option value="lag">Lag Indicator</option>
+                        <option value="lead">Lead Indicator</option>
+                      </select>
+                      <select
+                        value={formData.frequency || 'monthly'}
+                        onChange={e => setFormData({ ...formData, frequency: e.target.value as any })}
+                        className="input"
+                      >
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="per-project">Per Project</option>
+                      </select>
+                      <input
+                        type="number"
+                        value={formData.targetValue || 0}
+                        onChange={e => setFormData({ ...formData, targetValue: parseFloat(e.target.value) })}
+                        placeholder="Target value"
+                        className="input"
+                      />
+                      <input
+                        type="number"
+                        value={formData.currentValue || 0}
+                        onChange={e => setFormData({ ...formData, currentValue: parseFloat(e.target.value) })}
+                        placeholder="Current value"
+                        className="input"
+                      />
+                      <input
+                        type="text"
+                        value={formData.unit || ''}
+                        onChange={e => setFormData({ ...formData, unit: e.target.value })}
+                        placeholder="Unit (e.g., %, hours)"
+                        className="input"
+                      />
+                      <select
+                        value={formData.status || 'on-track'}
+                        onChange={e => setFormData({ ...formData, status: e.target.value as any })}
+                        className="input"
+                      >
+                        <option value="on-track">On Track</option>
+                        <option value="at-risk">At Risk</option>
+                        <option value="critical">Critical</option>
+                      </select>
+                      <select
+                        value={formData.trend || 'stable'}
+                        onChange={e => setFormData({ ...formData, trend: e.target.value as any })}
+                        className="input"
+                      >
+                        <option value="improving">Improving</option>
+                        <option value="stable">Stable</option>
+                        <option value="declining">Declining</option>
+                      </select>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={handleSave} className="btn-primary">Add Metric</button>
+                      <button onClick={handleCancel} className="btn-secondary">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="text-2xl font-bold text-green-600">13 KPIs</div>
-          <div className="text-sm text-gray-600">Balanced scorecard</div>
-        </div>
-      </div>
 
-      {/* 1. Governance Monitoring */}
-      <div className="card">
-        <div className="flex items-center gap-3 mb-4">
-          <Shield className="w-6 h-6 text-purple-600" />
-          <h2 className="text-xl font-bold">Governance Monitoring</h2>
-          <span className="ml-auto text-sm text-gray-600">Monthly Dashboard</span>
-        </div>
-        <div className="space-y-3">
-          {governanceMetrics.map((m, idx) => (
-            <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-900">{m.metric}</h3>
-                <span className={`text-2xl ${getStatusColor(m.status)}`}>
-                  {m.status === 'green' ? '🟢' : m.status === 'yellow' ? '🟡' : '🔴'}
+          {/* Summary */}
+          <div className="card bg-emerald-50 border-emerald-200">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-emerald-900">
+              <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+              Monitoring Summary
+            </h2>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-start gap-2">
+                <span className="text-emerald-600 mt-0.5">✓</span>
+                <p className="text-gray-700">
+                  <strong>Active Monitoring:</strong> {monitoringMetrics.totalMetrics} performance metrics tracked across COBIT objectives
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-emerald-600 mt-0.5">✓</span>
+                <p className="text-gray-700">
+                  <strong>Health Score:</strong> {monitoringMetrics.healthScore}% overall governance health
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className={`${monitoringMetrics.atRisk > 0 || monitoringMetrics.critical > 0 ? 'text-orange-600' : 'text-green-600'} mt-0.5`}>
+                  {monitoringMetrics.atRisk > 0 || monitoringMetrics.critical > 0 ? '→' : '✓'}
                 </span>
+                <p className="text-gray-700">
+                  <strong>Action Items:</strong> {monitoringMetrics.atRisk} metrics at risk, {monitoringMetrics.critical} critical
+                </p>
               </div>
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">Current:</span> {m.value} | <span className="font-medium">Target:</span> {m.target}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 p-4 bg-purple-50 rounded-lg">
-          <h4 className="font-semibold text-purple-900 mb-2">Quarterly Governance Reviews:</h4>
-          <ul className="text-sm text-purple-800 space-y-1">
-            <li>• Governance framework effectiveness assessment</li>
-            <li>• Stakeholder satisfaction surveys</li>
-            <li>• Governance process audits</li>
-            <li>• Exception reporting and trends analysis</li>
-          </ul>
-        </div>
-      </div>
-
-      {/* 2. Risk Monitoring */}
-      <div className="card">
-        <div className="flex items-center gap-3 mb-4">
-          <AlertTriangle className="w-6 h-6 text-orange-600" />
-          <h2 className="text-xl font-bold">Risk Monitoring</h2>
-          <span className="ml-auto text-sm text-gray-600">Updated Monthly</span>
-        </div>
-
-        <div className="p-4 bg-orange-50 rounded-lg mb-4">
-          <h4 className="font-semibold text-orange-900 mb-2">Current Risk Profile:</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-orange-800">
-            <div>• Total Active IT Risks: <strong>45</strong></div>
-            <div>• Risks Trending Up: <strong>6</strong></div>
-            <div>• High Risks: <strong className="text-red-600">8 🔴</strong></div>
-            <div>• Risks Trending Down: <strong>4</strong></div>
-            <div>• Medium Risks: <strong className="text-yellow-600">22 🟡</strong></div>
-            <div>• Low Risks: <strong className="text-green-600">15 🟢</strong></div>
-          </div>
-        </div>
-
-        <h4 className="font-semibold mb-3">Top IT Risks Being Monitored:</h4>
-        <div className="space-y-3">
-          {topRisks.map((risk, idx) => (
-            <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-gray-900">{idx + 1}. {risk.risk}</h3>
-                <span className={`text-xs px-2 py-1 rounded ${
-                  risk.trend.includes('Increasing') ? 'bg-red-100 text-red-800' :
-                  risk.trend.includes('Decreasing') ? 'bg-green-100 text-green-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {risk.trend}
-                </span>
-              </div>
-              <div className="text-sm text-gray-600 space-y-1">
-                <div><strong>Risk Level:</strong> {risk.inherent} (Inherent) → {risk.residual} (Residual)</div>
-                <div><strong>Mitigations:</strong> {risk.mitigations}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. Compliance Monitoring */}
-      <div className="card">
-        <div className="flex items-center gap-3 mb-4">
-          <CheckCircle className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-bold">Compliance Monitoring</h2>
-          <span className="ml-auto text-sm text-gray-600">Updated Monthly</span>
-        </div>
-
-        <h4 className="font-semibold mb-3">Regulatory Compliance Status:</h4>
-        <div className="space-y-3 mb-4">
-          {complianceStatus.map((comp, idx) => (
-            <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-900">{comp.regulation}</h3>
-                <span className={`text-xs px-2 py-1 rounded ${getStatusBadge(comp.statusColor)}`}>
-                  {comp.status}
-                </span>
-              </div>
-              <div className="text-sm text-gray-600">
-                <strong>Notes:</strong> {comp.notes}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <h4 className="font-semibold text-blue-900 mb-2">Compliance Monitoring Activities:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Control self-assessments: Quarterly</li>
-            <li>• Compliance testing: Continuous automated + quarterly manual</li>
-            <li>• Regulatory change monitoring: Continuous via RegTech</li>
-            <li>• Attestation reports: Quarterly to compliance committee</li>
-            <li>• External audits: Annual SOX, PCI-DSS</li>
-          </ul>
-        </div>
-      </div>
-
-      {/* 4. Performance Monitoring - IT Balanced Scorecard */}
-      <div className="card">
-        <div className="flex items-center gap-3 mb-4">
-          <Activity className="w-6 h-6 text-green-600" />
-          <h2 className="text-xl font-bold">Performance Monitoring</h2>
-          <span className="ml-auto text-sm text-gray-600">IT Balanced Scorecard</span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Stakeholder Perspective */}
-          <div className="p-4 bg-purple-50 rounded-lg">
-            <h4 className="font-semibold text-purple-900 mb-3">Stakeholder Perspective</h4>
-            <div className="space-y-2">
-              {balancedScorecard.stakeholder.map((m, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <span className={getStatusColor(m.status)}>
-                    {m.status === 'green' ? '🟢' : m.status === 'yellow' ? '🟡' : '🔴'}
-                  </span>
-                  <span className="flex-1 ml-2">{m.metric}:</span>
-                  <span className="font-semibold">{m.value}</span>
-                  <span className="text-gray-500 ml-2">({m.target})</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Financial Perspective */}
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-3">Financial Perspective</h4>
-            <div className="space-y-2">
-              {balancedScorecard.financial.map((m, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <span className={getStatusColor(m.status)}>
-                    {m.status === 'green' ? '🟢' : m.status === 'yellow' ? '🟡' : '🔴'}
-                  </span>
-                  <span className="flex-1 ml-2">{m.metric}:</span>
-                  <span className="font-semibold">{m.value}</span>
-                  <span className="text-gray-500 ml-2">({m.target})</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Internal Process Perspective */}
-          <div className="p-4 bg-teal-50 rounded-lg">
-            <h4 className="font-semibold text-teal-900 mb-3">Internal Process Perspective</h4>
-            <div className="space-y-2">
-              {balancedScorecard.process.map((m, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <span className={getStatusColor(m.status)}>
-                    {m.status === 'green' ? '🟢' : m.status === 'yellow' ? '🟡' : '🔴'}
-                  </span>
-                  <span className="flex-1 ml-2">{m.metric}:</span>
-                  <span className="font-semibold">{m.value}</span>
-                  <span className="text-gray-500 ml-2">({m.target})</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Learning & Growth Perspective */}
-          <div className="p-4 bg-green-50 rounded-lg">
-            <h4 className="font-semibold text-green-900 mb-3">Learning & Growth Perspective</h4>
-            <div className="space-y-2">
-              {balancedScorecard.learning.map((m, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <span className={getStatusColor(m.status)}>
-                    {m.status === 'green' ? '🟢' : m.status === 'yellow' ? '🟡' : '🔴'}
-                  </span>
-                  <span className="flex-1 ml-2">{m.metric}:</span>
-                  <span className="font-semibold">{m.value}</span>
-                  <span className="text-gray-500 ml-2">({m.target})</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-          <div className="font-semibold text-yellow-900">Overall Performance: MIXED</div>
-          <div className="text-sm text-yellow-800 mt-1">Status: 4 Red, 11 Yellow, 0 Green - Requires attention and improvement initiatives</div>
-        </div>
-      </div>
-
-      {/* Monitoring Tools */}
-      <div className="card">
-        <h2 className="text-xl font-bold mb-4">Monitoring Tools and Automation</h2>
-        <div className="space-y-3">
-          {monitoringTools.map((tool, idx) => (
-            <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-1">{idx + 1}. {tool.name}</h3>
-              <div className="text-sm text-gray-600">
-                <strong>Capabilities:</strong> {tool.capabilities}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Summary */}
-      <div className="card bg-teal-50 border-teal-200">
-        <h3 className="text-xl font-bold text-teal-900 mb-4">Monitoring Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h4 className="font-semibold text-teal-900 mb-2">Active Monitoring</h4>
-            <div className="space-y-2 text-sm text-teal-800">
-              <div className="flex justify-between">
-                <span>Governance Metrics:</span>
-                <span className="font-semibold">5 active</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Total IT Risks:</span>
-                <span className="font-semibold">45 tracked</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Compliance Regulations:</span>
-                <span className="font-semibold">5 regulations</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Performance KPIs:</span>
-                <span className="font-semibold">13 metrics</span>
+              <div className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">→</span>
+                <p className="text-gray-700">
+                  <strong>Next Step:</strong> Conduct performance analysis to identify root causes and improvement opportunities
+                </p>
               </div>
             </div>
           </div>
-          <div>
-            <h4 className="font-semibold text-teal-900 mb-2">Monitoring Approach</h4>
-            <ul className="text-sm text-teal-800 space-y-1">
-              <li>• Update Frequency: Monthly dashboards</li>
-              <li>• Real-time alerts for critical incidents</li>
-              <li>• Quarterly governance reviews</li>
-              <li>• Automated compliance testing</li>
-              <li>• 5 integrated monitoring platforms</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   )
 }
