@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Grid, Save, Plus, Info, Trash2 } from 'lucide-react'
 import { AppData, Component, ComponentType } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface ComponentDefinitionProps {
   appData: AppData
@@ -178,7 +179,7 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
   const completionPercentage = totalComponents > 0 ? Math.round((completedCount / totalComponents) * 100) : 0
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 max-w-6xl" data-testid={TEST_IDS.COMPONENT_DEFINITION.CONTAINER}>
       {/* Header */}
       <div className="gradient-teal text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
@@ -249,6 +250,7 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
             value={newComponent.type}
             onChange={(e) => setNewComponent({ ...newComponent, type: e.target.value as ComponentType })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            data-testid={TEST_IDS.COMPONENT_DEFINITION.COMPONENT_TYPE_SELECT}
           >
             {componentTypes.map(ct => (
               <option key={ct.type} value={ct.type}>
@@ -262,6 +264,7 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
             onChange={(e) => setNewComponent({ ...newComponent, name: e.target.value })}
             placeholder="Component name"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            data-testid={TEST_IDS.COMPONENT_DEFINITION.COMPONENT_NAME_INPUT}
           />
         </div>
         <div className="flex gap-3">
@@ -271,8 +274,9 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
             placeholder="Description (optional)"
             rows={2}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            data-testid={TEST_IDS.COMPONENT_DEFINITION.DESCRIPTION_TEXTAREA}
           />
-          <button onClick={addComponent} className="btn-primary flex items-center gap-2 self-start">
+          <button onClick={addComponent} className="btn-primary flex items-center gap-2 self-start" data-testid={TEST_IDS.COMPONENT_DEFINITION.ADD_COMPONENT_BUTTON}>
             <Plus className="w-4 h-4" />
             Add
           </button>
@@ -331,6 +335,7 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
                                   ? 'border-yellow-300 bg-yellow-50 text-yellow-700'
                                   : 'border-gray-300'
                               }`}
+                              data-testid={TEST_IDS.COMPONENT_DEFINITION.COMPONENT_STATUS_SELECT(globalIndex)}
                             >
                               <option value="planned">Planned</option>
                               <option value="in-progress">In Progress</option>
@@ -339,6 +344,7 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
                             <button
                               onClick={() => removeComponent(globalIndex)}
                               className="text-red-600 hover:text-red-700"
+                              data-testid={TEST_IDS.COMPONENT_DEFINITION.REMOVE_COMPONENT_BUTTON(globalIndex)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -366,6 +372,7 @@ const ComponentDefinition: React.FC<ComponentDefinitionProps> = ({ appData, upda
                         key={example}
                         onClick={() => addExampleComponent(type, example)}
                         className="px-3 py-1 text-xs bg-gray-100 hover:bg-teal-100 text-gray-700 hover:text-teal-800 rounded-full transition-colors"
+                        data-testid={TEST_IDS.COMPONENT_DEFINITION.QUICK_ADD_EXAMPLE_BUTTON(example.toLowerCase().replace(/\s+/g, '-'))}
                       >
                         + {example}
                       </button>

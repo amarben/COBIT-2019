@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { RefreshCcw, Save, Plus, Trash2, Lightbulb, TrendingUp, CheckCircle2, Clock } from 'lucide-react'
 import { AppData, ImprovementInitiative } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface ReviewEffectivenessProps {
   appData: AppData
@@ -117,7 +118,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
   }
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 max-w-6xl" data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.CONTAINER}>
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
@@ -212,6 +213,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
               onChange={(e) => setNewImprovement({ ...newImprovement, name: e.target.value })}
               placeholder="e.g., Enhance change management process"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_NAME_INPUT}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -221,6 +223,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
                 value={newImprovement.type}
                 onChange={(e) => setNewImprovement({ ...newImprovement, type: e.target.value as ImprovementInitiative['type'] })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_TYPE_SELECT}
               >
                 <option value="process">Process</option>
                 <option value="capability">Capability</option>
@@ -234,6 +237,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
                 value={newImprovement.priority}
                 onChange={(e) => setNewImprovement({ ...newImprovement, priority: e.target.value as ImprovementInitiative['priority'] })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_PRIORITY_SELECT}
               >
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
@@ -251,6 +255,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
               placeholder="Describe the improvement initiative..."
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_DESCRIPTION_TEXTAREA}
             />
           </div>
           <div>
@@ -261,11 +266,12 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
               placeholder="What results do you expect from this initiative?"
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_EXPECTED_OUTCOME_TEXTAREA}
             />
           </div>
         </div>
         <div className="flex justify-end">
-          <button onClick={addImprovement} className="btn-primary flex items-center gap-2">
+          <button onClick={addImprovement} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.ADD_INITIATIVE_BUTTON}>
             <Plus className="w-4 h-4" /> Add Initiative
           </button>
         </div>
@@ -302,7 +308,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
         <h3 className="font-semibold text-lg">Improvement Initiatives ({improvements.length})</h3>
 
         {improvements.length > 0 ? (
-          improvements.map(initiative => (
+          improvements.map((initiative, initiativeIndex) => (
             <div key={initiative.id} className={`card border-2 ${getStatusColor(initiative.status)}`}>
               <div className="flex items-start justify-between mb-3">
                 <div>
@@ -318,7 +324,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
                     </span>
                   </div>
                 </div>
-                <button onClick={() => removeImprovement(initiative.id)} className="text-red-600 hover:text-red-700">
+                <button onClick={() => removeImprovement(initiative.id)} className="text-red-600 hover:text-red-700" data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.REMOVE_INITIATIVE_BUTTON(initiativeIndex)}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -334,6 +340,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
                     value={initiative.status}
                     onChange={(e) => updateImprovement(initiative.id, { status: e.target.value as ImprovementInitiative['status'] })}
                     className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500"
+                    data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_STATUS_SELECT(initiativeIndex)}
                   >
                     <option value="proposed">Proposed</option>
                     <option value="approved">Approved</option>
@@ -349,6 +356,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
                     value={initiative.expectedOutcome}
                     onChange={(e) => updateImprovement(initiative.id, { expectedOutcome: e.target.value })}
                     className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500"
+                    data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_OUTCOME_INPUT(initiativeIndex)}
                   />
                 </div>
               </div>
@@ -361,6 +369,7 @@ const ReviewEffectiveness: React.FC<ReviewEffectivenessProps> = ({ appData, upda
                   placeholder="Document what worked, what didn't, and key insights..."
                   rows={2}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-indigo-500"
+                  data-testid={TEST_IDS.REVIEW_EFFECTIVENESS.INITIATIVE_LESSONS_TEXTAREA(initiativeIndex)}
                 />
               </div>
             </div>

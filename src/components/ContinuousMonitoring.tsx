@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { Eye, TrendingUp, AlertCircle, CheckCircle2, Download, Plus, Trash2, Edit2, Activity, Shield, BarChart3, FileText } from 'lucide-react'
 import { AppData, PerformanceMetric } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface ContinuousMonitoringProps {
   appData: AppData
@@ -431,11 +432,11 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
             Set up continuous monitoring to track governance performance metrics and ensure objectives are met.
           </p>
           <div className="flex justify-center gap-3">
-            <button onClick={loadExample} className="btn-secondary">
+            <button onClick={loadExample} className="btn-secondary" data-testid={TEST_IDS.CONTINUOUS_MONITORING.LOAD_EXAMPLE_BUTTON}>
               <Download className="w-4 h-4" />
               Load TechCorp Example
             </button>
-            <button onClick={handleAdd} className="btn-primary">
+            <button onClick={handleAdd} className="btn-primary" data-testid={TEST_IDS.CONTINUOUS_MONITORING.ADD_FIRST_METRIC_BUTTON}>
               <Plus className="w-4 h-4" />
               Add First Metric
             </button>
@@ -534,7 +535,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                 <FileText className="w-6 h-6 text-emerald-600" />
                 Performance Metrics ({filteredData.length})
               </h2>
-              <button onClick={handleAdd} className="btn-primary">
+              <button onClick={handleAdd} className="btn-primary" data-testid={TEST_IDS.CONTINUOUS_MONITORING.ADD_METRIC_BUTTON}>
                 <Plus className="w-4 h-4" />
                 Add Metric
               </button>
@@ -542,25 +543,34 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
 
             {/* Filter Tabs */}
             <div className="flex gap-2 mb-4 border-b border-gray-200">
-              {(['all', 'on-track', 'at-risk', 'critical'] as const).map(filter => (
-                <button
-                  key={filter}
-                  onClick={() => setSelectedFilter(filter)}
-                  className={`px-4 py-2 font-medium text-sm transition-colors ${
-                    selectedFilter === filter
-                      ? 'text-emerald-600 border-b-2 border-emerald-600'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {filter === 'all' ? 'All' : filter === 'on-track' ? 'On Track' : filter === 'at-risk' ? 'At Risk' : 'Critical'}
-                </button>
-              ))}
+              {(['all', 'on-track', 'at-risk', 'critical'] as const).map(filter => {
+                const testIdMap: Record<string, string> = {
+                  'all': TEST_IDS.CONTINUOUS_MONITORING.FILTER_ALL_TAB,
+                  'on-track': TEST_IDS.CONTINUOUS_MONITORING.FILTER_ON_TRACK_TAB,
+                  'at-risk': TEST_IDS.CONTINUOUS_MONITORING.FILTER_AT_RISK_TAB,
+                  'critical': TEST_IDS.CONTINUOUS_MONITORING.FILTER_CRITICAL_TAB,
+                }
+                return (
+                  <button
+                    key={filter}
+                    onClick={() => setSelectedFilter(filter)}
+                    className={`px-4 py-2 font-medium text-sm transition-colors ${
+                      selectedFilter === filter
+                        ? 'text-emerald-600 border-b-2 border-emerald-600'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                    data-testid={testIdMap[filter]}
+                  >
+                    {filter === 'all' ? 'All' : filter === 'on-track' ? 'On Track' : filter === 'at-risk' ? 'At Risk' : 'Critical'}
+                  </button>
+                )
+              })}
             </div>
 
             {/* Metrics List */}
             <div className="space-y-3">
-              {filteredData.map(metric => (
-                <div key={metric.id} className={`p-4 rounded-lg border ${getStatusColor(metric.status)}`}>
+              {filteredData.map((metric, index) => (
+                <div key={metric.id} className={`p-4 rounded-lg border ${getStatusColor(metric.status)}`} data-testid={TEST_IDS.CONTINUOUS_MONITORING.METRIC_CARD(index)}>
                   {editingId === metric.id ? (
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
@@ -570,6 +580,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           onChange={e => setFormData({ ...formData, objectiveId: e.target.value })}
                           placeholder="Objective ID (e.g., EDM01)"
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.OBJECTIVE_ID_INPUT(index)}
                         />
                         <input
                           type="text"
@@ -577,11 +588,13 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           onChange={e => setFormData({ ...formData, name: e.target.value })}
                           placeholder="Metric name"
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.METRIC_NAME_INPUT(index)}
                         />
                         <select
                           value={formData.category || 'lag'}
                           onChange={e => setFormData({ ...formData, category: e.target.value as 'lag' | 'lead' })}
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.CATEGORY_SELECT(index)}
                         >
                           <option value="lag">Lag Indicator</option>
                           <option value="lead">Lead Indicator</option>
@@ -590,6 +603,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           value={formData.frequency || 'monthly'}
                           onChange={e => setFormData({ ...formData, frequency: e.target.value as any })}
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.FREQUENCY_SELECT(index)}
                         >
                           <option value="daily">Daily</option>
                           <option value="weekly">Weekly</option>
@@ -603,6 +617,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           onChange={e => setFormData({ ...formData, targetValue: parseFloat(e.target.value) })}
                           placeholder="Target value"
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.TARGET_INPUT(index)}
                         />
                         <input
                           type="number"
@@ -610,6 +625,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           onChange={e => setFormData({ ...formData, currentValue: parseFloat(e.target.value) })}
                           placeholder="Current value"
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.CURRENT_INPUT(index)}
                         />
                         <input
                           type="text"
@@ -617,11 +633,13 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           onChange={e => setFormData({ ...formData, unit: e.target.value })}
                           placeholder="Unit (e.g., %, hours)"
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.UNIT_INPUT(index)}
                         />
                         <select
                           value={formData.status || 'on-track'}
                           onChange={e => setFormData({ ...formData, status: e.target.value as any })}
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.STATUS_SELECT(index)}
                         >
                           <option value="on-track">On Track</option>
                           <option value="at-risk">At Risk</option>
@@ -631,6 +649,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                           value={formData.trend || 'stable'}
                           onChange={e => setFormData({ ...formData, trend: e.target.value as any })}
                           className="input"
+                          data-testid={TEST_IDS.CONTINUOUS_MONITORING.TREND_SELECT(index)}
                         >
                           <option value="improving">Improving</option>
                           <option value="stable">Stable</option>
@@ -638,8 +657,8 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         </select>
                       </div>
                       <div className="flex gap-2">
-                        <button onClick={handleSave} className="btn-primary">Save</button>
-                        <button onClick={handleCancel} className="btn-secondary">Cancel</button>
+                        <button onClick={handleSave} className="btn-primary" data-testid={TEST_IDS.CONTINUOUS_MONITORING.SAVE_EDIT_BUTTON(index)}>Save</button>
+                        <button onClick={handleCancel} className="btn-secondary" data-testid={TEST_IDS.CONTINUOUS_MONITORING.CANCEL_EDIT_BUTTON(index)}>Cancel</button>
                       </div>
                     </div>
                   ) : (
@@ -659,10 +678,10 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         </div>
                         <div className="flex items-center gap-2">
                           {getTrendIcon(metric.trend)}
-                          <button onClick={() => handleEdit(metric)} className="p-2 hover:bg-white hover:bg-opacity-50 rounded transition-colors">
+                          <button onClick={() => handleEdit(metric)} className="p-2 hover:bg-white hover:bg-opacity-50 rounded transition-colors" data-testid={TEST_IDS.CONTINUOUS_MONITORING.EDIT_METRIC_BUTTON(index)}>
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          <button onClick={() => handleDelete(metric.id)} className="p-2 hover:bg-white hover:bg-opacity-50 rounded transition-colors text-red-600">
+                          <button onClick={() => handleDelete(metric.id)} className="p-2 hover:bg-white hover:bg-opacity-50 rounded transition-colors text-red-600" data-testid={TEST_IDS.CONTINUOUS_MONITORING.DELETE_METRIC_BUTTON(index)}>
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -699,6 +718,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         onChange={e => setFormData({ ...formData, objectiveId: e.target.value })}
                         placeholder="Objective ID (e.g., EDM01)"
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_OBJECTIVE_ID_INPUT}
                       />
                       <input
                         type="text"
@@ -706,11 +726,13 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Metric name"
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_METRIC_NAME_INPUT}
                       />
                       <select
                         value={formData.category || 'lag'}
                         onChange={e => setFormData({ ...formData, category: e.target.value as 'lag' | 'lead' })}
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_CATEGORY_SELECT}
                       >
                         <option value="lag">Lag Indicator</option>
                         <option value="lead">Lead Indicator</option>
@@ -719,6 +741,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         value={formData.frequency || 'monthly'}
                         onChange={e => setFormData({ ...formData, frequency: e.target.value as any })}
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_FREQUENCY_SELECT}
                       >
                         <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
@@ -732,6 +755,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         onChange={e => setFormData({ ...formData, targetValue: parseFloat(e.target.value) })}
                         placeholder="Target value"
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_TARGET_INPUT}
                       />
                       <input
                         type="number"
@@ -739,6 +763,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         onChange={e => setFormData({ ...formData, currentValue: parseFloat(e.target.value) })}
                         placeholder="Current value"
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_CURRENT_INPUT}
                       />
                       <input
                         type="text"
@@ -746,11 +771,13 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         onChange={e => setFormData({ ...formData, unit: e.target.value })}
                         placeholder="Unit (e.g., %, hours)"
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_UNIT_INPUT}
                       />
                       <select
                         value={formData.status || 'on-track'}
                         onChange={e => setFormData({ ...formData, status: e.target.value as any })}
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_STATUS_SELECT}
                       >
                         <option value="on-track">On Track</option>
                         <option value="at-risk">At Risk</option>
@@ -760,6 +787,7 @@ const ContinuousMonitoring: React.FC<ContinuousMonitoringProps> = ({ appData, up
                         value={formData.trend || 'stable'}
                         onChange={e => setFormData({ ...formData, trend: e.target.value as any })}
                         className="input"
+                        data-testid={TEST_IDS.CONTINUOUS_MONITORING.NEW_TREND_SELECT}
                       >
                         <option value="improving">Improving</option>
                         <option value="stable">Stable</option>

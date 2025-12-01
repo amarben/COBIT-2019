@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Demo Video 5: Phase 6-7 - Monitoring & Continuous Improvement
@@ -26,14 +27,14 @@ test.describe('Demo Video 5: Phase 6-7 - Monitoring & Continuous Improvement', (
     // PART 1: PHASE 6 - MONITORING & MEASUREMENT
 
     // SECTION 1: Navigate to Phase 6
-    const phase6 = sidebar.getByText('Realize Benefits')
+    const phase6 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(6))
     if (await phase6.isVisible()) {
       await phase6.click()
       await page.waitForTimeout(2000)
     }
 
     // Navigate to Benefits Realization
-    const benefitsReal = sidebar.getByText('Benefits Realization')
+    const benefitsReal = page.getByTestId(TEST_IDS.SIDEBAR.BENEFITS_REALIZATION_LINK)
     if (await benefitsReal.isVisible()) {
       await benefitsReal.click()
       await page.waitForTimeout(2000)
@@ -53,7 +54,7 @@ test.describe('Demo Video 5: Phase 6-7 - Monitoring & Continuous Improvement', (
     await page.waitForTimeout(2000)
 
     // SECTION 2: Performance Measurement
-    const perfMeasure = sidebar.getByText('Performance Measurement')
+    const perfMeasure = page.getByTestId(TEST_IDS.SIDEBAR.PERFORMANCE_MEASUREMENT_LINK)
     if (await perfMeasure.isVisible()) {
       await perfMeasure.click()
       await page.waitForTimeout(2000)
@@ -75,14 +76,14 @@ test.describe('Demo Video 5: Phase 6-7 - Monitoring & Continuous Improvement', (
     // PART 2: PHASE 7 - CONTINUOUS IMPROVEMENT
 
     // SECTION 3: Navigate to Phase 7
-    const phase7 = sidebar.getByText('Review Effectiveness')
+    const phase7 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(7))
     if (await phase7.isVisible()) {
       await phase7.click()
       await page.waitForTimeout(2000)
     }
 
     // Navigate to Review Effectiveness component
-    const reviewEff = sidebar.getByText('Review Effectiveness').last()
+    const reviewEff = page.getByTestId(TEST_IDS.SIDEBAR.REVIEW_EFFECTIVENESS_LINK)
     if (await reviewEff.isVisible()) {
       await reviewEff.click()
       await page.waitForTimeout(2000)
@@ -99,7 +100,7 @@ test.describe('Demo Video 5: Phase 6-7 - Monitoring & Continuous Improvement', (
     await page.waitForTimeout(2000)
 
     // SECTION 4: Return to Dashboard
-    const dashboard = sidebar.getByText('Dashboard', { exact: true })
+    const dashboard = page.getByTestId(TEST_IDS.SIDEBAR.DASHBOARD_LINK)
     if (await dashboard.isVisible()) {
       await dashboard.click()
       await page.waitForTimeout(2000)

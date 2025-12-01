@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Phase 6 Demo: Continuous Monitoring
@@ -24,7 +25,7 @@ test.describe('Phase 6 Demo: Continuous Monitoring', () => {
 
     // Expand Phase 6 with realistic interaction
     console.log('📍 Navigating to Phase 6: Realize Benefits')
-    const phase6Button = page.locator('aside button').filter({ hasText: /Realize Benefits/ })
+    const phase6Button = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(6))
     await phase6Button.waitFor({ state: 'visible', timeout: 30000 })
     await phase6Button.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
@@ -52,7 +53,7 @@ test.describe('Phase 6 Demo: Continuous Monitoring', () => {
 
     // Load TechCorp Example with realistic interaction
     console.log('📍 Loading TechCorp monitoring metrics')
-    const loadExampleButton = page.getByRole('button', { name: /Load TechCorp Example/i })
+    const loadExampleButton = page.getByTestId(TEST_IDS.CONTINUOUS_MONITORING.LOAD_EXAMPLE_BUTTON)
     await loadExampleButton.waitFor({ state: 'visible', timeout: 10000 })
     await loadExampleButton.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
@@ -95,7 +96,7 @@ test.describe('Phase 6 Demo: Continuous Monitoring', () => {
 
     // Filter by On Track with realistic interaction
     console.log('📍 Filtering: On Track metrics')
-    const onTrackFilter = page.getByRole('button', { name: /On Track/i }).first()
+    const onTrackFilter = page.getByTestId(TEST_IDS.CONTINUOUS_MONITORING.FILTER_ON_TRACK_TAB)
     await onTrackFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await onTrackFilter.hover()
@@ -105,7 +106,7 @@ test.describe('Phase 6 Demo: Continuous Monitoring', () => {
 
     // Filter by At Risk with realistic interaction
     console.log('📍 Filtering: At Risk metrics')
-    const atRiskFilter = page.getByRole('button', { name: /At Risk/i }).first()
+    const atRiskFilter = page.getByTestId(TEST_IDS.CONTINUOUS_MONITORING.FILTER_AT_RISK_TAB)
     await atRiskFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await atRiskFilter.hover()
@@ -119,7 +120,7 @@ test.describe('Phase 6 Demo: Continuous Monitoring', () => {
 
     // Filter by Critical with realistic interaction
     console.log('📍 Filtering: Critical metrics')
-    const criticalFilter = page.getByRole('button', { name: /Critical/i }).first()
+    const criticalFilter = page.getByTestId(TEST_IDS.CONTINUOUS_MONITORING.FILTER_CRITICAL_TAB)
     await criticalFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await criticalFilter.hover()
@@ -129,7 +130,7 @@ test.describe('Phase 6 Demo: Continuous Monitoring', () => {
 
     // Reset to All with realistic interaction
     console.log('📍 Showing all metrics')
-    const allFilter = page.getByRole('button', { name: /All/i }).first()
+    const allFilter = page.getByTestId(TEST_IDS.CONTINUOUS_MONITORING.FILTER_ALL_TAB)
     await allFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await allFilter.hover()

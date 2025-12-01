@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Demo Video 2: Phase 1-2 Assessment
@@ -10,7 +11,7 @@ import { test } from '@playwright/test'
 
 test.describe('Demo Video 2: Phase 1-2 Assessment', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.evaluate(() => localStorage.clear())
     await page.reload()
   })
@@ -18,14 +19,14 @@ test.describe('Demo Video 2: Phase 1-2 Assessment', () => {
   test('complete Phase 1-2 assessment walkthrough', async ({ page }) => {
     test.slow() // Triple timeout
 
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2000)
 
     const sidebar = page.locator('aside')
 
     // SECTION 1: Navigate to Phase 1 - Programme Initiation
-    const programmeInit = sidebar.getByText('Programme Initiation')
+    const programmeInit = page.getByTestId(TEST_IDS.SIDEBAR.PROGRAMME_INITIATION_LINK)
     if (await programmeInit.isVisible()) {
       await programmeInit.click()
       await page.waitForTimeout(2000)
@@ -42,7 +43,7 @@ test.describe('Demo Video 2: Phase 1-2 Assessment', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 2: Navigate to Governance Context
-    const govContext = sidebar.getByText('Governance Context')
+    const govContext = page.getByTestId(TEST_IDS.SIDEBAR.GOVERNANCE_CONTEXT_LINK)
     if (await govContext.isVisible()) {
       await govContext.click()
       await page.waitForTimeout(2000)
@@ -59,7 +60,7 @@ test.describe('Demo Video 2: Phase 1-2 Assessment', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 3: Navigate to Capability Assessment
-    const capAssess = sidebar.getByText('Capability Assessment')
+    const capAssess = page.getByTestId(TEST_IDS.SIDEBAR.CAPABILITY_ASSESSMENT_LINK)
     if (await capAssess.isVisible()) {
       await capAssess.click()
       await page.waitForTimeout(2000)
@@ -79,7 +80,7 @@ test.describe('Demo Video 2: Phase 1-2 Assessment', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 4: Navigate to Issues Identification (if available)
-    const issues = sidebar.getByText('Issues Identification')
+    const issues = page.getByTestId(TEST_IDS.SIDEBAR.ISSUES_IDENTIFICATION_LINK)
     if (await issues.isVisible()) {
       await issues.click()
       await page.waitForTimeout(2000)
@@ -92,7 +93,7 @@ test.describe('Demo Video 2: Phase 1-2 Assessment', () => {
     }
 
     // SECTION 5: Return to Dashboard
-    const dashboard = sidebar.getByText('Dashboard', { exact: true })
+    const dashboard = page.getByTestId(TEST_IDS.SIDEBAR.DASHBOARD_LINK)
     if (await dashboard.isVisible()) {
       await dashboard.click()
       await page.waitForTimeout(2000)

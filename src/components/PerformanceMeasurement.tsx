@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { BarChart, Save, Plus } from 'lucide-react'
 import { AppData, PerformanceMetric } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface PerformanceMeasurementProps {
   appData: AppData
@@ -58,7 +59,7 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
   }
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 max-w-6xl" data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.CONTAINER}>
       <div className="gradient-teal text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
           <BarChart className="w-8 h-8" />
@@ -78,11 +79,13 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
             onChange={(e) => setNewMetric({ ...newMetric, name: e.target.value })}
             placeholder="Metric name"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_METRIC_NAME_INPUT}
           />
           <select
             value={newMetric.type}
             onChange={(e) => setNewMetric({ ...newMetric, type: e.target.value as 'lag' | 'lead' })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_METRIC_TYPE_SELECT}
           >
             <option value="lag">Lag Indicator (Outcome)</option>
             <option value="lead">Lead Indicator (Driver)</option>
@@ -91,6 +94,7 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
             value={newMetric.category}
             onChange={(e) => setNewMetric({ ...newMetric, category: e.target.value as 'kpi' | 'process-capability' | 'goal' })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_METRIC_CATEGORY_SELECT}
           >
             <option value="kpi">KPI</option>
             <option value="process-capability">Process Capability</option>
@@ -102,6 +106,7 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
             onChange={(e) => setNewMetric({ ...newMetric, objectiveId: e.target.value })}
             placeholder="Objective ID (e.g., EDM01)"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_OBJECTIVE_ID_INPUT}
           />
           <input
             type="number"
@@ -109,6 +114,7 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
             onChange={(e) => setNewMetric({ ...newMetric, target: parseFloat(e.target.value) })}
             placeholder="Target"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_TARGET_INPUT}
           />
           <input
             type="number"
@@ -116,6 +122,7 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
             onChange={(e) => setNewMetric({ ...newMetric, current: parseFloat(e.target.value) })}
             placeholder="Current"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_CURRENT_INPUT}
           />
           <div className="flex gap-2">
             <input
@@ -124,8 +131,9 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
               onChange={(e) => setNewMetric({ ...newMetric, unit: e.target.value })}
               placeholder="Unit"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+              data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.NEW_UNIT_INPUT}
             />
-            <button onClick={addMetric} className="btn-primary flex items-center gap-2">
+            <button onClick={addMetric} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.ADD_METRIC_BUTTON}>
               <Plus className="w-4 h-4" />
             </button>
           </div>
@@ -164,6 +172,7 @@ const PerformanceMeasurement: React.FC<PerformanceMeasurementProps> = ({ appData
                         value={metric.current}
                         onChange={(e) => updateMetric(index, 'current', parseFloat(e.target.value))}
                         className="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center"
+                        data-testid={TEST_IDS.PERFORMANCE_MEASUREMENT.METRIC_CURRENT_VALUE_INPUT(index)}
                       />
                     </td>
                     <td className="py-2 px-2 text-center">

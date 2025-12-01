@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Phase 5 Demo: Enabler Deployment
@@ -24,7 +25,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Expand Phase 5 with realistic interaction
     console.log('📍 Navigating to Phase 5: Execute Plan')
-    const phase5Button = page.locator('aside button').filter({ hasText: /Execute Plan/ })
+    const phase5Button = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(5))
     await phase5Button.waitFor({ state: 'visible', timeout: 30000 })
     await phase5Button.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
@@ -52,7 +53,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Load TechCorp Example with realistic interaction
     console.log('📍 Loading TechCorp example data')
-    const loadExampleButton = page.getByRole('button', { name: /Load TechCorp Example/i })
+    const loadExampleButton = page.getByTestId(TEST_IDS.ENABLER_DEPLOYMENT.LOAD_EXAMPLE_BUTTON)
     await loadExampleButton.waitFor({ state: 'visible', timeout: 10000 })
     await loadExampleButton.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
@@ -82,7 +83,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Filter by Policies with realistic interaction
     console.log('📍 Filtering by Policies')
-    const policiesFilter = page.getByRole('button', { name: /Policies & Frameworks/i })
+    const policiesFilter = page.getByTestId(TEST_IDS.ENABLER_DEPLOYMENT.FILTER_POLICIES_BUTTON)
     await policiesFilter.waitFor({ state: 'visible', timeout: 10000 })
     await policiesFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
@@ -97,7 +98,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Filter by Tools with realistic interaction
     console.log('📍 Filtering by Tools')
-    const toolsFilter = page.getByRole('button', { name: /Tools & Infrastructure/i })
+    const toolsFilter = page.getByTestId(TEST_IDS.ENABLER_DEPLOYMENT.FILTER_TOOLS_BUTTON)
     await toolsFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await toolsFilter.hover()
@@ -111,7 +112,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Filter by Skills with realistic interaction
     console.log('📍 Filtering by Skills')
-    const skillsFilter = page.getByRole('button', { name: /Skills & Training/i })
+    const skillsFilter = page.getByTestId(TEST_IDS.ENABLER_DEPLOYMENT.FILTER_SKILLS_BUTTON)
     await skillsFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await skillsFilter.hover()
@@ -125,7 +126,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Filter by Culture with realistic interaction
     console.log('📍 Filtering by Culture')
-    const cultureFilter = page.getByRole('button', { name: /Culture & Behavior/i })
+    const cultureFilter = page.getByTestId(TEST_IDS.ENABLER_DEPLOYMENT.FILTER_CULTURE_BUTTON)
     await cultureFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await cultureFilter.hover()
@@ -139,7 +140,7 @@ test.describe('Phase 5 Demo: Enabler Deployment', () => {
 
     // Reset to All with realistic interaction
     console.log('📍 Showing all enablers')
-    const allFilter = page.getByRole('button', { name: /All \(/i })
+    const allFilter = page.getByTestId(TEST_IDS.ENABLER_DEPLOYMENT.FILTER_ALL_BUTTON)
     await allFilter.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
     await allFilter.hover()

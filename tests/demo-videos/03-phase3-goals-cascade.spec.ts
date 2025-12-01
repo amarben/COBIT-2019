@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Demo Video 3: Phase 3 - Goals Cascade
@@ -10,28 +11,28 @@ import { test } from '@playwright/test'
 
 test.describe('Demo Video 3: Phase 3 - Goals Cascade', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.waitForLoadState('networkidle')
   })
 
   test('complete Phase 3 goals cascade walkthrough', async ({ page }) => {
     test.slow() // Triple timeout
 
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2000)
 
     const sidebar = page.locator('aside')
 
     // SECTION 1: Navigate to Phase 3
-    const phase3 = sidebar.getByText('Define Road Map')
+    const phase3 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(3))
     if (await phase3.isVisible()) {
       await phase3.click()
       await page.waitForTimeout(2000)
     }
 
     // SECTION 2: Navigate to Goals Cascade component
-    const goalsCascade = sidebar.getByText('Goals Cascade')
+    const goalsCascade = page.getByTestId(TEST_IDS.SIDEBAR.GOALS_CASCADE_LINK)
     if (await goalsCascade.isVisible()) {
       await goalsCascade.click()
       await page.waitForTimeout(2000)
@@ -89,7 +90,7 @@ test.describe('Demo Video 3: Phase 3 - Goals Cascade', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 6: Design Factors (if available)
-    const designFactors = sidebar.getByText('Design Factors')
+    const designFactors = page.getByTestId(TEST_IDS.SIDEBAR.DESIGN_FACTORS_LINK)
     if (await designFactors.isVisible()) {
       await designFactors.click()
       await page.waitForTimeout(2000)
@@ -106,7 +107,7 @@ test.describe('Demo Video 3: Phase 3 - Goals Cascade', () => {
     }
 
     // SECTION 7: Return to Dashboard
-    const dashboard = sidebar.getByText('Dashboard', { exact: true })
+    const dashboard = page.getByTestId(TEST_IDS.SIDEBAR.DASHBOARD_LINK)
     if (await dashboard.isVisible()) {
       await dashboard.click()
       await page.waitForTimeout(2000)

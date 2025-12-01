@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Phase 7 Demo: Continuous Improvement
@@ -24,7 +25,7 @@ test.describe('Phase 7 Demo: Continuous Improvement', () => {
 
     // Expand Phase 7 with realistic interaction
     console.log('📍 Navigating to Phase 7: Review Effectiveness')
-    const phase7Button = page.locator('aside button').filter({ hasText: /Review Effectiveness/ })
+    const phase7Button = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(7))
     await phase7Button.waitFor({ state: 'visible', timeout: 30000 })
     await phase7Button.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
@@ -52,7 +53,7 @@ test.describe('Phase 7 Demo: Continuous Improvement', () => {
 
     // Load TechCorp Example with realistic interaction
     console.log('📍 Loading TechCorp improvement portfolio')
-    const loadExampleButton = page.getByRole('button', { name: /Load TechCorp Example/i })
+    const loadExampleButton = page.getByTestId(TEST_IDS.CONTINUOUS_IMPROVEMENT.LOAD_EXAMPLE_BUTTON)
     await loadExampleButton.waitFor({ state: 'visible', timeout: 10000 })
     await loadExampleButton.scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)

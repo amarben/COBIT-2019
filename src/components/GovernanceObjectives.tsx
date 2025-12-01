@@ -4,6 +4,7 @@ import { AppData } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
 import { governanceObjectivesData } from '../data/governanceObjectives'
 import RACIChart from './RACIChart'
+import { TEST_IDS } from '../constants/testIds'
 
 interface GovernanceObjectivesProps {
   appData: AppData
@@ -62,7 +63,7 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
     : objectives
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 max-w-6xl" data-testid={TEST_IDS.GOVERNANCE_OBJECTIVES.CONTAINER}>
       {/* Header */}
       <div className="gradient-teal text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
@@ -108,6 +109,7 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
               ? 'border-purple-600 text-purple-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
+          data-testid={TEST_IDS.GOVERNANCE_OBJECTIVES.TAB_PRACTICES_BUTTON}
         >
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
@@ -121,6 +123,7 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
               ? 'border-purple-600 text-purple-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
+          data-testid={TEST_IDS.GOVERNANCE_OBJECTIVES.TAB_RACI_BUTTON}
         >
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
@@ -203,6 +206,7 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
                       ? 'bg-purple-600 text-white'
                       : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                   }`}
+                  data-testid={TEST_IDS.GOVERNANCE_OBJECTIVES.ENABLE_OBJECTIVE_TOGGLE(objective.id)}
                 >
                   {objective.enabled ? (
                     <CheckCircle className="w-6 h-6" />
@@ -251,6 +255,7 @@ const GovernanceObjectives: React.FC<GovernanceObjectivesProps> = ({
                                 : 'border-gray-300 hover:border-gray-400'
                             }`}
                             disabled={!objective.enabled}
+                            data-testid={TEST_IDS.GOVERNANCE_OBJECTIVES.ENABLE_PRACTICE_CHECKBOX(objective.id, practice.id)}
                           >
                             {practice.implemented && (
                               <svg

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Wrench, CheckCircle, Clock, FileText, Laptop, GraduationCap, Users, Plus, Download, Trash2, Edit } from 'lucide-react'
 import { AppData, EnablerItem, ComponentType } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface EnablerDeploymentProps {
   appData: AppData
@@ -160,11 +161,11 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
             Document the policies, tools, skills, and culture initiatives you're deploying to support your governance objectives.
           </p>
           <div className="flex gap-3 justify-center">
-            <button onClick={loadExample} className="btn-secondary flex items-center gap-2">
+            <button onClick={loadExample} className="btn-secondary flex items-center gap-2" data-testid={TEST_IDS.ENABLER_DEPLOYMENT.LOAD_EXAMPLE_BUTTON}>
               <Download className="w-4 h-4" />
               Load TechCorp Example
             </button>
-            <button onClick={() => setShowAddForm(true)} className="btn-primary flex items-center gap-2">
+            <button onClick={() => setShowAddForm(true)} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.ENABLER_DEPLOYMENT.ADD_FIRST_ENABLER_BUTTON}>
               <Plus className="w-4 h-4" />
               Add First Enabler
             </button>
@@ -184,7 +185,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                   Load Example
                 </button>
               )}
-              <button onClick={() => setShowAddForm(true)} className="btn-primary text-sm flex items-center gap-2">
+              <button onClick={() => setShowAddForm(true)} className="btn-primary text-sm flex items-center gap-2" data-testid={TEST_IDS.ENABLER_DEPLOYMENT.ADD_ENABLER_BUTTON}>
                 <Plus className="w-4 h-4" />
                 Add Enabler
               </button>
@@ -246,12 +247,22 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   filterType === 'all' ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
+                data-testid={TEST_IDS.ENABLER_DEPLOYMENT.FILTER_ALL_BUTTON}
               >
                 All ({displayData.length})
               </button>
               {Object.entries(enablerTypeLabels).map(([type, { label }]) => {
                 const count = displayData.filter(i => i.enablerType === type).length
                 if (count === 0) return null
+
+                // Map testID based on type
+                const testIdMap: Record<string, string> = {
+                  'principles-policies-frameworks': TEST_IDS.ENABLER_DEPLOYMENT.FILTER_POLICIES_BUTTON,
+                  'services-infrastructure': TEST_IDS.ENABLER_DEPLOYMENT.FILTER_TOOLS_BUTTON,
+                  'people-skills-competencies': TEST_IDS.ENABLER_DEPLOYMENT.FILTER_SKILLS_BUTTON,
+                  'culture-ethics-behavior': TEST_IDS.ENABLER_DEPLOYMENT.FILTER_CULTURE_BUTTON,
+                }
+
                 return (
                   <button
                     key={type}
@@ -259,6 +270,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       filterType === type ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
+                    data-testid={testIdMap[type]}
                   >
                     {label} ({count})
                   </button>
@@ -278,11 +290,11 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
               </div>
             ) : (
               <div className="space-y-3">
-                {filteredItems.map((item) => {
+                {filteredItems.map((item, index) => {
                   const typeInfo = enablerTypeLabels[item.enablerType]
                   const Icon = typeInfo?.icon || Wrench
                   return (
-                    <div key={item.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div key={item.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200" data-testid={TEST_IDS.ENABLER_DEPLOYMENT.ENABLER_CARD(index)}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2 flex-1">
                           {item.status === 'completed' ? (
@@ -310,6 +322,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                             onClick={() => setEditingItem(item)}
                             className="p-1 hover:bg-gray-200 rounded"
                             title="Edit"
+                            data-testid={TEST_IDS.ENABLER_DEPLOYMENT.EDIT_ENABLER_BUTTON(index)}
                           >
                             <Edit className="w-4 h-4 text-gray-600" />
                           </button>
@@ -317,6 +330,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                             onClick={() => handleDeleteItem(item.id)}
                             className="p-1 hover:bg-red-100 rounded"
                             title="Delete"
+                            data-testid={TEST_IDS.ENABLER_DEPLOYMENT.DELETE_ENABLER_BUTTON(index)}
                           >
                             <Trash2 className="w-4 h-4 text-red-600" />
                           </button>
@@ -367,6 +381,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                       : setNewItem({ ...newItem, enablerType: e.target.value as ComponentType })
                     }
                     className="input-field"
+                    data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_TYPE_SELECT}
                   >
                     {Object.entries(enablerTypeLabels).map(([value, { label }]) => (
                       <option key={value} value={value}>{label}</option>
@@ -388,6 +403,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                     }
                     className="input-field"
                     placeholder="e.g., IT Governance Policy"
+                    data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_NAME_INPUT}
                   />
                 </div>
 
@@ -403,6 +419,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                       : setNewItem({ ...newItem, status: e.target.value as 'completed' | 'in-progress' | 'planned' })
                     }
                     className="input-field"
+                    data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_STATUS_SELECT}
                   >
                     <option value="planned">Planned</option>
                     <option value="in-progress">In Progress</option>
@@ -424,6 +441,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., v1.0"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_VERSION_INPUT}
                       />
                     </div>
                     <div>
@@ -437,6 +455,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., March 2024"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_APPROVED_DATE_INPUT}
                       />
                     </div>
                     <div>
@@ -450,6 +469,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         className="input-field"
                         rows={2}
                         placeholder="Describe the scope and coverage"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_SCOPE_TEXTAREA}
                       />
                     </div>
                   </>
@@ -468,6 +488,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., Production, February 2024"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_DEPLOYED_DATE_INPUT}
                       />
                     </div>
                     <div>
@@ -481,6 +502,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         className="input-field"
                         rows={2}
                         placeholder="Key modules or capabilities"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_MODULES_TEXTAREA}
                       />
                     </div>
                     <div>
@@ -494,6 +516,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., All IT staff, 150 licenses"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_USERS_INPUT}
                       />
                     </div>
                     <div>
@@ -507,6 +530,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., $500K"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_INVESTMENT_INPUT}
                       />
                     </div>
                   </>
@@ -525,6 +549,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., 45 IT leaders"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_PARTICIPANTS_INPUT}
                       />
                     </div>
                     <div>
@@ -538,6 +563,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., 12 COBIT certified"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_CERTIFICATIONS_INPUT}
                       />
                     </div>
                     <div>
@@ -551,6 +577,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., $50K"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_INVESTMENT_INPUT}
                       />
                     </div>
                   </>
@@ -569,6 +596,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         className="input-field"
                         rows={2}
                         placeholder="Key activities and programs"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_ACTIVITIES_TEXTAREA}
                       />
                     </div>
                     <div>
@@ -582,6 +610,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="Primary goal or objective"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_GOAL_INPUT}
                       />
                     </div>
                     <div>
@@ -595,6 +624,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                         }
                         className="input-field"
                         placeholder="e.g., Awareness: 78%"
+                        data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_METRICS_INPUT}
                       />
                     </div>
                   </>
@@ -609,6 +639,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                     setNewItem({ enablerType: 'principles-policies-frameworks', name: '', status: 'planned' })
                   }}
                   className="btn-secondary flex-1"
+                  data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_CANCEL_BUTTON}
                 >
                   Cancel
                 </button>
@@ -616,6 +647,7 @@ const EnablerDeployment: React.FC<EnablerDeploymentProps> = ({ appData, updateAp
                   onClick={editingItem ? handleUpdateItem : handleAddItem}
                   className="btn-primary flex-1"
                   disabled={editingItem ? !editingItem.name : !newItem.name}
+                  data-testid={TEST_IDS.ENABLER_DEPLOYMENT.MODAL_SAVE_BUTTON}
                 >
                   {editingItem ? 'Update' : 'Add'} Enabler
                 </button>

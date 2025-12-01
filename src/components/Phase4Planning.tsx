@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { FileText, Save, Target, Zap, Users, Calendar, DollarSign, AlertTriangle, CheckCircle2, Plus, Trash2 } from 'lucide-react'
 import { AppData } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface Phase4PlanningProps {
   appData: AppData
@@ -277,6 +278,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                 businessCase.status === 'rejected' ? 'bg-red-100 text-red-800' :
                 'bg-gray-100 text-gray-800'
               }`}
+              data-testid={TEST_IDS.PHASE4_PLANNING.BUSINESS_CASE_STATUS_SELECT}
             >
               <option value="draft">Draft</option>
               <option value="review">Under Review</option>
@@ -297,6 +299,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                   onChange={(e) => setBusinessCase(prev => ({ ...prev, title: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                   placeholder="e.g., COBIT 2019 Governance Implementation"
+                  data-testid={TEST_IDS.PHASE4_PLANNING.BUSINESS_CASE_TITLE_INPUT}
                 />
               </div>
               <div>
@@ -307,6 +310,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                   onChange={(e) => setBusinessCase(prev => ({ ...prev, sponsor: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                   placeholder="e.g., CIO, CFO"
+                  data-testid={TEST_IDS.PHASE4_PLANNING.BUSINESS_CASE_SPONSOR_INPUT}
                 />
               </div>
             </div>
@@ -324,6 +328,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                   rows={3}
                   placeholder="Describe the current pain points, gaps, and issues that need to be addressed..."
+                  data-testid={TEST_IDS.PHASE4_PLANNING.PROBLEM_STATEMENT_TEXTAREA}
                 />
               </div>
               <div>
@@ -334,6 +339,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                   rows={3}
                   placeholder="Describe how COBIT 2019 implementation will address these issues..."
+                  data-testid={TEST_IDS.PHASE4_PLANNING.SOLUTION_TEXTAREA}
                 />
               </div>
             </div>
@@ -343,7 +349,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Expected Benefits</h3>
-              <button onClick={addBenefit} className="btn-secondary text-sm flex items-center gap-1">
+              <button onClick={addBenefit} className="btn-secondary text-sm flex items-center gap-1" data-testid={TEST_IDS.PHASE4_PLANNING.ADD_BENEFIT_BUTTON}>
                 <Plus className="w-4 h-4" /> Add Benefit
               </button>
             </div>
@@ -361,6 +367,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         setBusinessCase(prev => ({ ...prev, benefits: updated }))
                       }}
                       className="px-2 py-1 border border-gray-300 rounded text-sm"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.BENEFIT_CATEGORY_INPUT(index)}
                     >
                       <option value="financial">Financial</option>
                       <option value="operational">Operational</option>
@@ -377,6 +384,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                       }}
                       className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
                       placeholder="Benefit description..."
+                      data-testid={TEST_IDS.PHASE4_PLANNING.BENEFIT_DESCRIPTION_TEXTAREA(index)}
                     />
                     <input
                       type="text"
@@ -388,6 +396,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                       }}
                       className="w-32 px-2 py-1 border border-gray-300 rounded text-sm"
                       placeholder="Est. value"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.BENEFIT_VALUE_INPUT(index)}
                     />
                     <button
                       onClick={() => {
@@ -395,6 +404,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         setBusinessCase(prev => ({ ...prev, benefits: updated }))
                       }}
                       className="text-red-500 hover:text-red-700"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.REMOVE_BENEFIT_BUTTON(index)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -408,7 +418,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Estimated Costs</h3>
-              <button onClick={addCost} className="btn-secondary text-sm flex items-center gap-1">
+              <button onClick={addCost} className="btn-secondary text-sm flex items-center gap-1" data-testid={TEST_IDS.PHASE4_PLANNING.ADD_COST_BUTTON}>
                 <Plus className="w-4 h-4" /> Add Cost
               </button>
             </div>
@@ -426,6 +436,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         setBusinessCase(prev => ({ ...prev, costs: updated }))
                       }}
                       className="px-2 py-1 border border-gray-300 rounded text-sm"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.COST_TYPE_SELECT(index)}
                     >
                       <option value="capital">Capital</option>
                       <option value="operational">Operational</option>
@@ -441,6 +452,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                       }}
                       className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
                       placeholder="Cost description..."
+                      data-testid={TEST_IDS.PHASE4_PLANNING.COST_DESCRIPTION_INPUT(index)}
                     />
                     <input
                       type="text"
@@ -452,6 +464,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                       }}
                       className="w-32 px-2 py-1 border border-gray-300 rounded text-sm"
                       placeholder="Amount"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.COST_AMOUNT_INPUT(index)}
                     />
                     <button
                       onClick={() => {
@@ -459,6 +472,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         setBusinessCase(prev => ({ ...prev, costs: updated }))
                       }}
                       className="text-red-500 hover:text-red-700"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.REMOVE_COST_BUTTON(index)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -472,7 +486,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Risks & Mitigations</h3>
-              <button onClick={addRisk} className="btn-secondary text-sm flex items-center gap-1">
+              <button onClick={addRisk} className="btn-secondary text-sm flex items-center gap-1" data-testid={TEST_IDS.PHASE4_PLANNING.ADD_RISK_BUTTON}>
                 <Plus className="w-4 h-4" /> Add Risk
               </button>
             </div>
@@ -495,6 +509,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                           }}
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                           placeholder="Risk description..."
+                          data-testid={TEST_IDS.PHASE4_PLANNING.RISK_DESCRIPTION_INPUT(index)}
                         />
                         <input
                           type="text"
@@ -506,6 +521,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                           }}
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                           placeholder="Mitigation strategy..."
+                          data-testid={TEST_IDS.PHASE4_PLANNING.RISK_MITIGATION_INPUT(index)}
                         />
                       </div>
                       <button
@@ -514,6 +530,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                           setBusinessCase(prev => ({ ...prev, risks: updated }))
                         }}
                         className="text-red-500 hover:text-red-700"
+                        data-testid={TEST_IDS.PHASE4_PLANNING.REMOVE_RISK_BUTTON(index)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -528,7 +545,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Success Criteria</h3>
-              <button onClick={addSuccessCriteria} className="btn-secondary text-sm flex items-center gap-1">
+              <button onClick={addSuccessCriteria} className="btn-secondary text-sm flex items-center gap-1" data-testid={TEST_IDS.PHASE4_PLANNING.ADD_SUCCESS_CRITERIA_BUTTON}>
                 <Plus className="w-4 h-4" /> Add Criteria
               </button>
             </div>
@@ -549,6 +566,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                       }}
                       className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
                       placeholder="Measurable success criteria..."
+                      data-testid={TEST_IDS.PHASE4_PLANNING.SUCCESS_CRITERIA_INPUT(index)}
                     />
                     <button
                       onClick={() => {
@@ -556,6 +574,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         setBusinessCase(prev => ({ ...prev, successCriteria: updated }))
                       }}
                       className="text-red-500 hover:text-red-700"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.REMOVE_SUCCESS_CRITERIA_BUTTON(index)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -595,7 +614,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
           {/* Quick Wins List */}
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">Quick Wins</h2>
-            <button onClick={addQuickWin} className="btn-primary flex items-center gap-2">
+            <button onClick={addQuickWin} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.PHASE4_PLANNING.ADD_QUICK_WIN_BUTTON}>
               <Plus className="w-4 h-4" /> Add Quick Win
             </button>
           </div>
@@ -608,7 +627,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
             </div>
           ) : (
             <div className="space-y-4">
-              {quickWins.map(qw => (
+              {quickWins.map((qw, index) => (
                 <div key={qw.id} className={`card ${
                   qw.status === 'completed' ? 'bg-green-50 border-green-200' :
                   qw.status === 'in-progress' ? 'bg-blue-50 border-blue-200' :
@@ -623,12 +642,14 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                           onChange={(e) => updateQuickWin(qw.id, { title: e.target.value })}
                           className="px-3 py-2 border border-gray-300 rounded-lg font-medium"
                           placeholder="Quick win title..."
+                          data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_TITLE_INPUT(index)}
                         />
                         <div className="flex gap-2">
                           <select
                             value={qw.effort}
                             onChange={(e) => updateQuickWin(qw.id, { effort: e.target.value as QuickWin['effort'] })}
                             className="px-2 py-2 border border-gray-300 rounded-lg text-sm"
+                            data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_EFFORT_SELECT(index)}
                           >
                             <option value="low">Low Effort</option>
                             <option value="medium">Medium Effort</option>
@@ -638,6 +659,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                             value={qw.impact}
                             onChange={(e) => updateQuickWin(qw.id, { impact: e.target.value as QuickWin['impact'] })}
                             className="px-2 py-2 border border-gray-300 rounded-lg text-sm"
+                            data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_IMPACT_SELECT(index)}
                           >
                             <option value="high">High Impact</option>
                             <option value="medium">Medium Impact</option>
@@ -651,6 +673,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                               qw.status === 'in-progress' ? 'bg-blue-100 text-blue-800 border-blue-300' :
                               'border-gray-300'
                             }`}
+                            data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_STATUS_SELECT(index)}
                           >
                             <option value="identified">Identified</option>
                             <option value="in-progress">In Progress</option>
@@ -664,6 +687,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                         rows={2}
                         placeholder="Description of the quick win..."
+                        data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_DESCRIPTION_TEXTAREA(index)}
                       />
                       <div className="grid grid-cols-2 gap-3">
                         <input
@@ -672,18 +696,21 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                           onChange={(e) => updateQuickWin(qw.id, { owner: e.target.value })}
                           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
                           placeholder="Owner/Responsible"
+                          data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_OWNER_INPUT(index)}
                         />
                         <input
                           type="date"
                           value={qw.targetDate}
                           onChange={(e) => updateQuickWin(qw.id, { targetDate: e.target.value })}
                           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          data-testid={TEST_IDS.PHASE4_PLANNING.QUICK_WIN_TARGET_DATE_INPUT(index)}
                         />
                       </div>
                     </div>
                     <button
                       onClick={() => removeQuickWin(qw.id)}
                       className="text-red-500 hover:text-red-700"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.REMOVE_QUICK_WIN_BUTTON(index)}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
@@ -700,7 +727,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">Implementation Projects</h2>
-            <button onClick={addProject} className="btn-primary flex items-center gap-2">
+            <button onClick={addProject} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.PHASE4_PLANNING.ADD_PROJECT_BUTTON}>
               <Plus className="w-4 h-4" /> Add Project
             </button>
           </div>
@@ -713,7 +740,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
             </div>
           ) : (
             <div className="space-y-4">
-              {projects.map(proj => (
+              {projects.map((proj, index) => (
                 <div key={proj.id} className="card">
                   <div className="flex items-start gap-4">
                     <div className="flex-1 space-y-3">
@@ -724,6 +751,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                           onChange={(e) => updateProject(proj.id, { name: e.target.value })}
                           className="px-3 py-2 border border-gray-300 rounded-lg font-medium"
                           placeholder="Project name..."
+                          data-testid={TEST_IDS.PHASE4_PLANNING.PROJECT_NAME_INPUT(index)}
                         />
                         <div className="flex gap-2">
                           <input
@@ -732,6 +760,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                             onChange={(e) => updateProject(proj.id, { startDate: e.target.value })}
                             className="flex-1 px-2 py-2 border border-gray-300 rounded-lg text-sm"
                             placeholder="Start"
+                            data-testid={TEST_IDS.PHASE4_PLANNING.PROJECT_START_DATE_INPUT(index)}
                           />
                           <input
                             type="date"
@@ -739,6 +768,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                             onChange={(e) => updateProject(proj.id, { endDate: e.target.value })}
                             className="flex-1 px-2 py-2 border border-gray-300 rounded-lg text-sm"
                             placeholder="End"
+                            data-testid={TEST_IDS.PHASE4_PLANNING.PROJECT_END_DATE_INPUT(index)}
                           />
                         </div>
                         <select
@@ -750,6 +780,7 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                             proj.status === 'on-hold' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
                             'border-gray-300'
                           }`}
+                          data-testid={TEST_IDS.PHASE4_PLANNING.PROJECT_STATUS_SELECT(index)}
                         >
                           <option value="planned">Planned</option>
                           <option value="in-progress">In Progress</option>
@@ -763,11 +794,13 @@ const Phase4Planning: React.FC<Phase4PlanningProps> = ({ appData, updateAppData 
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                         rows={2}
                         placeholder="Project description and objectives..."
+                        data-testid={TEST_IDS.PHASE4_PLANNING.PROJECT_DESCRIPTION_TEXTAREA(index)}
                       />
                     </div>
                     <button
                       onClick={() => removeProject(proj.id)}
                       className="text-red-500 hover:text-red-700"
+                      data-testid={TEST_IDS.PHASE4_PLANNING.REMOVE_PROJECT_BUTTON(index)}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>

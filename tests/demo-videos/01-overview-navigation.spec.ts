@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Demo Video 1: Overview & Navigation
@@ -10,7 +11,7 @@ import { test } from '@playwright/test'
 
 test.describe('Demo Video 1: Overview & Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.evaluate(() => localStorage.clear())
     await page.reload()
   })
@@ -18,7 +19,7 @@ test.describe('Demo Video 1: Overview & Navigation', () => {
   test('complete overview and navigation walkthrough', async ({ page }) => {
     test.slow() // Triple timeout for video recording
 
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(3000)
 
@@ -30,38 +31,38 @@ test.describe('Demo Video 1: Overview & Navigation', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 3: Click through phases
-    const phase1 = sidebar.locator('button').filter({ hasText: /Initiate Programme/ }).first()
+    const phase1 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(1))
     if (await phase1.isVisible()) {
       await phase1.click()
       await page.waitForTimeout(2000)
     }
 
-    const phase2 = sidebar.locator('button').filter({ hasText: /Define Problems/ }).first()
+    const phase2 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(2))
     if (await phase2.isVisible()) {
       await phase2.click()
       await page.waitForTimeout(2000)
     }
 
-    const phase3 = sidebar.locator('button').filter({ hasText: /Define Road Map/ }).first()
+    const phase3 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(3))
     if (await phase3.isVisible()) {
       await phase3.click()
       await page.waitForTimeout(2000)
     }
 
-    const phase4 = sidebar.locator('button').filter({ hasText: /Plan Programme/ }).first()
+    const phase4 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(4))
     if (await phase4.isVisible()) {
       await phase4.click()
       await page.waitForTimeout(2000)
     }
 
-    const phase5 = sidebar.locator('button').filter({ hasText: /Execute Plan/ }).first()
+    const phase5 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(5))
     if (await phase5.isVisible()) {
       await phase5.click()
       await page.waitForTimeout(2000)
     }
 
     // SECTION 4: Toggle sidebar
-    const toggleBtn = page.locator('button').first()
+    const toggleBtn = page.getByTestId(TEST_IDS.SIDEBAR.TOGGLE_BUTTON)
     await toggleBtn.click()
     await page.waitForTimeout(2000)
 
@@ -79,7 +80,7 @@ test.describe('Demo Video 1: Overview & Navigation', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 6: Hover export
-    const exportBtn = page.locator('button').filter({ hasText: /export/i }).first()
+    const exportBtn = page.getByTestId(TEST_IDS.DASHBOARD.EXPORT_BUTTON).first()
     if (await exportBtn.isVisible()) {
       await exportBtn.hover()
       await page.waitForTimeout(2000)

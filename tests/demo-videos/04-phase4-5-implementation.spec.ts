@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+import { TEST_IDS } from '../../src/constants/testIds'
 
 /**
  * Demo Video 4: Phase 4-5 - Planning & Implementation
@@ -10,14 +11,14 @@ import { test } from '@playwright/test'
 
 test.describe('Demo Video 4: Phase 4-5 - Planning & Implementation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.waitForLoadState('networkidle')
   })
 
   test('complete Phase 4-5 planning and implementation walkthrough', async ({ page }) => {
     test.slow() // Triple timeout
 
-    await page.goto('/')
+    await page.goto('http://localhost:5174/')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2000)
 
@@ -26,14 +27,14 @@ test.describe('Demo Video 4: Phase 4-5 - Planning & Implementation', () => {
     // PART 1: PHASE 4 - PLANNING
 
     // SECTION 1: Navigate to Phase 4
-    const phase4 = sidebar.getByText('Plan Programme')
+    const phase4 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(4))
     if (await phase4.isVisible()) {
       await phase4.click()
       await page.waitForTimeout(2000)
     }
 
     // Navigate to Phase 4 Planning component
-    const phase4Planning = sidebar.getByText('Phase 4 Planning')
+    const phase4Planning = page.getByTestId(TEST_IDS.SIDEBAR.PHASE4_PLANNING_LINK)
     if (await phase4Planning.isVisible()) {
       await phase4Planning.click()
       await page.waitForTimeout(2000)
@@ -58,14 +59,14 @@ test.describe('Demo Video 4: Phase 4-5 - Planning & Implementation', () => {
     // PART 2: PHASE 5 - IMPLEMENTATION
 
     // SECTION 2: Navigate to Phase 5
-    const phase5 = sidebar.getByText('Execute Plan')
+    const phase5 = page.getByTestId(TEST_IDS.SIDEBAR.PHASE_BUTTON(5))
     if (await phase5.isVisible()) {
       await phase5.click()
       await page.waitForTimeout(2000)
     }
 
     // SECTION 3: Governance Objectives (EDM)
-    const governanceObj = sidebar.getByText('Governance Objectives')
+    const governanceObj = page.getByTestId(TEST_IDS.SIDEBAR.GOVERNANCE_OBJECTIVES_LINK)
     if (await governanceObj.isVisible()) {
       await governanceObj.click()
       await page.waitForTimeout(2000)
@@ -82,7 +83,7 @@ test.describe('Demo Video 4: Phase 4-5 - Planning & Implementation', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 4: Component Definition (APO/BAI/DSS/MEA)
-    const componentDef = sidebar.getByText('Component Definition')
+    const componentDef = page.getByTestId(TEST_IDS.SIDEBAR.COMPONENT_DEFINITION_LINK)
     if (await componentDef.isVisible()) {
       await componentDef.click()
       await page.waitForTimeout(2000)
@@ -102,7 +103,7 @@ test.describe('Demo Video 4: Phase 4-5 - Planning & Implementation', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 5: RACI Chart
-    const raciChart = sidebar.getByText('RACI Chart')
+    const raciChart = page.getByTestId(TEST_IDS.SIDEBAR.RACI_CHART_LINK)
     if (await raciChart.isVisible()) {
       await raciChart.click()
       await page.waitForTimeout(2000)
@@ -122,7 +123,7 @@ test.describe('Demo Video 4: Phase 4-5 - Planning & Implementation', () => {
     await page.waitForTimeout(2000)
 
     // SECTION 6: Return to Dashboard
-    const dashboard = sidebar.getByText('Dashboard', { exact: true })
+    const dashboard = page.getByTestId(TEST_IDS.SIDEBAR.DASHBOARD_LINK)
     if (await dashboard.isVisible()) {
       await dashboard.click()
       await page.waitForTimeout(2000)

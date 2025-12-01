@@ -49,7 +49,7 @@ const STORAGE_KEY = 'cobit-2019-app-data'
 const getStepTestId = (stepId: string): string => {
   const mapping: Record<string, string> = {
     'programme-initiation': TEST_IDS.SIDEBAR.PROGRAMME_INITIATION_LINK,
-    'drivers': TEST_IDS.SIDEBAR.PROGRAMME_INITIATION_LINK,
+    'drivers': TEST_IDS.SIDEBAR.DRIVERS_LINK,
     'current-state': TEST_IDS.SIDEBAR.GOVERNANCE_CONTEXT_LINK,
     'capability-assessment': TEST_IDS.SIDEBAR.CAPABILITY_ASSESSMENT_LINK,
     'issues-identification': TEST_IDS.SIDEBAR.ISSUES_IDENTIFICATION_LINK,
@@ -363,6 +363,7 @@ function App() {
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            data-testid={TEST_IDS.SIDEBAR.TOGGLE_BUTTON}
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

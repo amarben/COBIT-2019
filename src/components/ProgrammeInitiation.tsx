@@ -200,6 +200,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               onChange={(e) => setProgramme({ ...programme, sponsor: e.target.value })}
               placeholder="e.g., CIO, VP of IT"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.EXECUTIVE_SPONSOR_INPUT}
             />
           </div>
         </div>
@@ -228,6 +229,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
                 timeline: { ...programme.timeline, startDate: e.target.value }
               })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.TARGET_START_DATE_INPUT}
             />
           </div>
           <div>
@@ -242,6 +244,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
                 timeline: { ...programme.timeline, targetEndDate: e.target.value }
               })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.TARGET_END_DATE_INPUT}
             />
           </div>
         </div>
@@ -264,8 +267,9 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
             onKeyPress={(e) => e.key === 'Enter' && addObjective()}
             placeholder="e.g., Achieve COBIT maturity level 3 for key processes"
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            data-testid={TEST_IDS.PROGRAMME_INITIATION.PROGRAMME_OBJECTIVE_INPUT(programme.objectives.length)}
           />
-          <button onClick={addObjective} className="btn-primary flex items-center gap-2">
+          <button onClick={addObjective} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.PROGRAMME_INITIATION.ADD_OBJECTIVE_BUTTON}>
             <Plus className="w-4 h-4" /> Add
           </button>
         </div>
@@ -274,7 +278,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
             {programme.objectives.map((obj, index) => (
               <li key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <span className="text-sm">{obj}</span>
-                <button onClick={() => removeObjective(index)} className="text-red-600 hover:text-red-700">
+                <button onClick={() => removeObjective(index)} className="text-red-600 hover:text-red-700" data-testid={TEST_IDS.PROGRAMME_INITIATION.REMOVE_OBJECTIVE_BUTTON(index)}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </li>
@@ -303,6 +307,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               value={newDriver.type}
               onChange={(e) => setNewDriver({ ...newDriver, type: e.target.value as ProgrammeDriver['type'] })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.DRIVER_TYPE_SELECT(programme.drivers.length)}
             >
               <option value="internal">Internal Driver</option>
               <option value="external">External Driver</option>
@@ -311,12 +316,13 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               value={newDriver.urgency}
               onChange={(e) => setNewDriver({ ...newDriver, urgency: e.target.value as ProgrammeDriver['urgency'] })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.DRIVER_URGENCY_SELECT(programme.drivers.length)}
             >
               <option value="high">High Urgency</option>
               <option value="medium">Medium Urgency</option>
               <option value="low">Low Urgency</option>
             </select>
-            <button onClick={addDriver} className="btn-primary flex items-center justify-center gap-2">
+            <button onClick={addDriver} className="btn-primary flex items-center justify-center gap-2" data-testid={TEST_IDS.PROGRAMME_INITIATION.ADD_DRIVER_BUTTON}>
               <Plus className="w-4 h-4" /> Add Driver
             </button>
           </div>
@@ -327,13 +333,14 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
             onKeyPress={(e) => e.key === 'Enter' && addDriver()}
             placeholder="e.g., Recent audit findings, Regulatory requirements, Security incidents, Digital transformation needs"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            data-testid={TEST_IDS.PROGRAMME_INITIATION.DRIVER_DESCRIPTION_INPUT(programme.drivers.length)}
           />
         </div>
 
         {/* Driver List */}
         {programme.drivers.length > 0 ? (
           <div className="space-y-2">
-            {programme.drivers.map(driver => (
+            {programme.drivers.map((driver, index) => (
               <div key={driver.id} className="flex items-start justify-between p-3 bg-white rounded-lg border">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -352,7 +359,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
                   </div>
                   <p className="text-sm text-gray-700">{driver.description}</p>
                 </div>
-                <button onClick={() => removeDriver(driver.id)} className="text-red-600 hover:text-red-700 ml-3">
+                <button onClick={() => removeDriver(driver.id)} className="text-red-600 hover:text-red-700 ml-3" data-testid={TEST_IDS.PROGRAMME_INITIATION.REMOVE_DRIVER_BUTTON(index)}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -407,6 +414,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               onChange={(e) => setNewRisk({ ...newRisk, description: e.target.value })}
               placeholder="Risk description"
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.RISK_DESCRIPTION_INPUT(programme.risks.length)}
             />
             <input
               type="text"
@@ -414,6 +422,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               onChange={(e) => setNewRisk({ ...newRisk, mitigation: e.target.value })}
               placeholder="Mitigation strategy"
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.RISK_MITIGATION_INPUT(programme.risks.length)}
             />
           </div>
           <div className="flex gap-3">
@@ -421,6 +430,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               value={newRisk.likelihood}
               onChange={(e) => setNewRisk({ ...newRisk, likelihood: e.target.value as ProgrammeRisk['likelihood'] })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.RISK_LIKELIHOOD_SELECT(programme.risks.length)}
             >
               <option value="high">High Likelihood</option>
               <option value="medium">Medium Likelihood</option>
@@ -430,12 +440,13 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
               value={newRisk.impact}
               onChange={(e) => setNewRisk({ ...newRisk, impact: e.target.value as ProgrammeRisk['impact'] })}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              data-testid={TEST_IDS.PROGRAMME_INITIATION.RISK_IMPACT_SELECT(programme.risks.length)}
             >
               <option value="high">High Impact</option>
               <option value="medium">Medium Impact</option>
               <option value="low">Low Impact</option>
             </select>
-            <button onClick={addRisk} className="btn-primary flex items-center gap-2">
+            <button onClick={addRisk} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.PROGRAMME_INITIATION.ADD_RISK_BUTTON}>
               <Plus className="w-4 h-4" /> Add
             </button>
           </div>
@@ -443,7 +454,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
 
         {programme.risks.length > 0 ? (
           <div className="space-y-2">
-            {programme.risks.map(risk => (
+            {programme.risks.map((risk, index) => (
               <div key={risk.id} className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -470,7 +481,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
                       </p>
                     )}
                   </div>
-                  <button onClick={() => removeRisk(risk.id)} className="text-red-600 hover:text-red-700 ml-3">
+                  <button onClick={() => removeRisk(risk.id)} className="text-red-600 hover:text-red-700 ml-3" data-testid={TEST_IDS.PROGRAMME_INITIATION.REMOVE_RISK_BUTTON(index)}>
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -495,6 +506,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
             value={newResource.type}
             onChange={(e) => setNewResource({ ...newResource, type: e.target.value as ProgrammeResource['type'] })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PROGRAMME_INITIATION.RESOURCE_TYPE_SELECT(programme.resources.length)}
           >
             <option value="budget">Budget</option>
             <option value="people">People</option>
@@ -507,15 +519,16 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
             onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
             placeholder="Resource description"
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+            data-testid={TEST_IDS.PROGRAMME_INITIATION.RESOURCE_DESCRIPTION_INPUT(programme.resources.length)}
           />
-          <button onClick={addResource} className="btn-primary flex items-center gap-2">
+          <button onClick={addResource} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.PROGRAMME_INITIATION.ADD_RESOURCE_BUTTON}>
             <Plus className="w-4 h-4" /> Add
           </button>
         </div>
 
         {programme.resources.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {programme.resources.map(resource => (
+            {programme.resources.map((resource, index) => (
               <div
                 key={resource.id}
                 className={`p-3 rounded-lg border flex items-center justify-between ${
@@ -528,6 +541,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
                     checked={resource.allocated}
                     onChange={() => toggleResourceAllocated(resource.id)}
                     className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                    data-testid={TEST_IDS.PROGRAMME_INITIATION.RESOURCE_ALLOCATED_CHECKBOX(index)}
                   />
                   <div>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${
@@ -541,7 +555,7 @@ const ProgrammeInitiation: React.FC<ProgrammeInitiationProps> = ({ appData, upda
                     <p className="text-sm text-gray-700 mt-1">{resource.description}</p>
                   </div>
                 </div>
-                <button onClick={() => removeResource(resource.id)} className="text-red-600 hover:text-red-700">
+                <button onClick={() => removeResource(resource.id)} className="text-red-600 hover:text-red-700" data-testid={TEST_IDS.PROGRAMME_INITIATION.REMOVE_RESOURCE_BUTTON(index)}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

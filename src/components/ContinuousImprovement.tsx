@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { RefreshCcw, TrendingUp, Users, Cloud, Bot, Shield, Database, CheckCircle, AlertCircle, Plus, Download, Trash2, Edit } from 'lucide-react'
 import { AppData, ImprovementInitiative } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface ContinuousImprovementProps {
   appData: AppData
@@ -314,11 +315,11 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
             Track your strategic improvement initiatives to continuously enhance governance maturity and performance.
           </p>
           <div className="flex gap-3 justify-center">
-            <button onClick={loadExample} className="btn-secondary flex items-center gap-2">
+            <button onClick={loadExample} className="btn-secondary flex items-center gap-2" data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.LOAD_EXAMPLE_BUTTON}>
               <Download className="w-4 h-4" />
               Load TechCorp Example
             </button>
-            <button onClick={() => setShowAddForm(true)} className="btn-primary flex items-center gap-2">
+            <button onClick={() => setShowAddForm(true)} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.ADD_FIRST_INITIATIVE_BUTTON}>
               <Plus className="w-4 h-4" />
               Add First Initiative
             </button>
@@ -331,7 +332,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
         <>
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Improvement Portfolio Dashboard</h2>
-            <button onClick={() => setShowAddForm(true)} className="btn-primary text-sm flex items-center gap-2">
+            <button onClick={() => setShowAddForm(true)} className="btn-primary text-sm flex items-center gap-2" data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.ADD_INITIATIVE_BUTTON}>
               <Plus className="w-4 h-4" />
               Add Initiative
             </button>
@@ -373,6 +374,17 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
               ].map(cat => {
                 const count = cat.id === 'all' ? displayData.length : displayData.filter(i => i.type === cat.id).length
                 if (count === 0 && cat.id !== 'all') return null
+
+                const testIdMap: Record<string, string> = {
+                  'all': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_ALL_BUTTON,
+                  'capability': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_CAPABILITY_BUTTON,
+                  'performance': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_PERFORMANCE_BUTTON,
+                  'innovation': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_INNOVATION_BUTTON,
+                  'technology': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_TECHNOLOGY_BUTTON,
+                  'governance': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_GOVERNANCE_BUTTON,
+                  'process': TEST_IDS.CONTINUOUS_IMPROVEMENT.FILTER_PROCESS_BUTTON,
+                }
+
                 return (
                   <button
                     key={cat.id}
@@ -382,6 +394,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                         ? 'bg-teal-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
+                    data-testid={testIdMap[cat.id]}
                   >
                     {cat.icon} {cat.label} ({count})
                   </button>
@@ -398,7 +411,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                 No initiatives in this category yet.
               </div>
             ) : (
-              filteredInitiatives.map((initiative) => {
+              filteredInitiatives.map((initiative, index) => {
                 const Icon = iconMap[initiative.type] || RefreshCcw
                 const colorMap: Record<string, string> = {
                   innovation: 'purple',
@@ -411,7 +424,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                 const color = colorMap[initiative.type] || 'gray'
 
                 return (
-                  <div key={initiative.id} className="card border-2">
+                  <div key={initiative.id} className="card border-2" data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.INITIATIVE_CARD(index)}>
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-start gap-3 flex-1">
                         <div className={`p-2 rounded-lg bg-${color}-100`}>
@@ -431,6 +444,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                           onClick={() => setEditingInitiative(initiative)}
                           className="p-1 hover:bg-gray-200 rounded"
                           title="Edit"
+                          data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.EDIT_INITIATIVE_BUTTON(index)}
                         >
                           <Edit className="w-4 h-4 text-gray-600" />
                         </button>
@@ -438,6 +452,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                           onClick={() => handleDeleteInitiative(initiative.id)}
                           className="p-1 hover:bg-red-100 rounded"
                           title="Delete"
+                          data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.DELETE_INITIATIVE_BUTTON(index)}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
@@ -536,6 +551,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                     }
                     className="input-field"
                     placeholder="e.g., Benefits Realization Framework"
+                    data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_NAME_INPUT}
                   />
                 </div>
 
@@ -553,6 +569,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                     className="input-field"
                     rows={2}
                     placeholder="Brief description of the initiative"
+                    data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_DESCRIPTION_TEXTAREA}
                   />
                 </div>
 
@@ -567,6 +584,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                         : setNewInitiative({ ...newInitiative, type: e.target.value as any })
                       }
                       className="input-field"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_TYPE_SELECT}
                     >
                       <option value="capability">Capability Maturity</option>
                       <option value="performance">Performance Optimization</option>
@@ -587,6 +605,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                         : setNewInitiative({ ...newInitiative, priority: e.target.value as any })
                       }
                       className="input-field"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_PRIORITY_SELECT}
                     >
                       <option value="high">High</option>
                       <option value="medium">Medium</option>
@@ -604,6 +623,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                         : setNewInitiative({ ...newInitiative, status: e.target.value as any })
                       }
                       className="input-field"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_STATUS_SELECT}
                     >
                       <option value="proposed">Proposed</option>
                       <option value="approved">Approved</option>
@@ -628,6 +648,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                         : setNewInitiative({ ...newInitiative, progress: parseInt(e.target.value) || 0 })
                       }
                       className="input-field"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_PROGRESS_INPUT}
                     />
                   </div>
                 </div>
@@ -645,6 +666,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                       }
                       className="input-field"
                       placeholder="e.g., CIO"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_SPONSOR_INPUT}
                     />
                   </div>
 
@@ -660,6 +682,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                       }
                       className="input-field"
                       placeholder="e.g., EDM02, APO13"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_COBIT_REF_INPUT}
                     />
                   </div>
 
@@ -675,6 +698,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                       }
                       className="input-field"
                       placeholder="e.g., Q1 2024 - Q4 2024"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_TIMELINE_INPUT}
                     />
                   </div>
 
@@ -690,6 +714,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                       }
                       className="input-field"
                       placeholder="e.g., $500,000"
+                      data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_BUDGET_INPUT}
                     />
                   </div>
                 </div>
@@ -706,6 +731,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                     }
                     className="input-field"
                     placeholder="e.g., 5 developers, 2 architects"
+                    data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_TEAM_INPUT}
                   />
                 </div>
 
@@ -721,6 +747,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                     className="input-field"
                     rows={2}
                     placeholder="Describe the expected impact and outcomes"
+                    data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_EXPECTED_OUTCOME_TEXTAREA}
                   />
                 </div>
 
@@ -736,6 +763,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                     className="input-field"
                     rows={2}
                     placeholder="Document key lessons learned (if applicable)"
+                    data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_LESSONS_LEARNED_TEXTAREA}
                   />
                 </div>
               </div>
@@ -748,6 +776,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                     setNewInitiative({ type: 'capability', priority: 'medium', status: 'proposed' })
                   }}
                   className="btn-secondary flex-1"
+                  data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_CANCEL_BUTTON}
                 >
                   Cancel
                 </button>
@@ -755,6 +784,7 @@ const ContinuousImprovement: React.FC<ContinuousImprovementProps> = ({ appData, 
                   onClick={editingInitiative ? handleUpdateInitiative : handleAddInitiative}
                   className="btn-primary flex-1"
                   disabled={editingInitiative ? !editingInitiative.name || !editingInitiative.description : !newInitiative.name || !newInitiative.description}
+                  data-testid={TEST_IDS.CONTINUOUS_IMPROVEMENT.MODAL_SAVE_BUTTON}
                 >
                   {editingInitiative ? 'Update' : 'Add'} Initiative
                 </button>

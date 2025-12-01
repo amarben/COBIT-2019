@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Award, Save, Plus, Trash2, TrendingUp, Check, X, Clock } from 'lucide-react'
 import { AppData, Benefit } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface BenefitsRealizationProps {
   appData: AppData
@@ -116,7 +117,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
   }
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 max-w-6xl" data-testid={TEST_IDS.BENEFITS_REALIZATION.CONTAINER}>
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-600 to-emerald-800 text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
@@ -204,6 +205,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
               onChange={(e) => setNewBenefit({ ...newBenefit, name: e.target.value })}
               placeholder="e.g., Reduced security incidents"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+              data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_NAME_INPUT}
             />
           </div>
           <div>
@@ -212,6 +214,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
               value={newBenefit.type}
               onChange={(e) => setNewBenefit({ ...newBenefit, type: e.target.value as Benefit['type'] })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+              data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_TYPE_SELECT}
             >
               <option value="financial">Financial</option>
               <option value="operational">Operational</option>
@@ -228,6 +231,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
             placeholder="Describe the expected benefit and how it will be measured..."
             rows={2}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_DESCRIPTION_TEXTAREA}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -238,6 +242,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
               value={newBenefit.targetValue}
               onChange={(e) => setNewBenefit({ ...newBenefit, targetValue: parseFloat(e.target.value) || 0 })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+              data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_TARGET_VALUE_INPUT}
             />
           </div>
           <div>
@@ -246,6 +251,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
               value={newBenefit.unit}
               onChange={(e) => setNewBenefit({ ...newBenefit, unit: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+              data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_UNIT_SELECT}
             >
               <option value="%">Percentage (%)</option>
               <option value="$">Dollars ($)</option>
@@ -256,7 +262,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
             </select>
           </div>
           <div className="flex items-end">
-            <button onClick={addBenefit} className="w-full btn-primary flex items-center justify-center gap-2">
+            <button onClick={addBenefit} className="w-full btn-primary flex items-center justify-center gap-2" data-testid={TEST_IDS.BENEFITS_REALIZATION.ADD_BENEFIT_BUTTON}>
               <Plus className="w-4 h-4" /> Add Benefit
             </button>
           </div>
@@ -273,6 +279,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
               ? Math.round((benefit.actualValue / benefit.targetValue) * 100)
               : 0
 
+            const benefitIndex = benefits.indexOf(benefit)
             return (
               <div key={benefit.id} className={`card border-2 ${getStatusColor(benefit.status)}`}>
                 <div className="flex items-start justify-between mb-3">
@@ -285,7 +292,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
                       </span>
                     </div>
                   </div>
-                  <button onClick={() => removeBenefit(benefit.id)} className="text-red-600 hover:text-red-700">
+                  <button onClick={() => removeBenefit(benefit.id)} className="text-red-600 hover:text-red-700" data-testid={TEST_IDS.BENEFITS_REALIZATION.REMOVE_BENEFIT_BUTTON(benefitIndex)}>
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -301,6 +308,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
                       value={benefit.status}
                       onChange={(e) => updateBenefit(benefit.id, { status: e.target.value as Benefit['status'] })}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-emerald-500"
+                      data-testid={TEST_IDS.BENEFITS_REALIZATION.STATUS_UPDATE_INPUT(benefitIndex)}
                     >
                       <option value="planned">Planned</option>
                       <option value="in-progress">In Progress</option>
@@ -315,6 +323,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
                       value={benefit.targetValue}
                       onChange={(e) => updateBenefit(benefit.id, { targetValue: parseFloat(e.target.value) || 0 })}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-emerald-500"
+                      data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_TARGET_INPUT(benefitIndex)}
                     />
                   </div>
                   <div>
@@ -324,6 +333,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
                       value={benefit.actualValue}
                       onChange={(e) => updateBenefit(benefit.id, { actualValue: parseFloat(e.target.value) || 0 })}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-emerald-500"
+                      data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_ACTUAL_VALUE_INPUT(benefitIndex)}
                     />
                   </div>
                   <div>
@@ -353,6 +363,7 @@ const BenefitsRealization: React.FC<BenefitsRealizationProps> = ({ appData, upda
                     placeholder="Document evidence of benefit realization..."
                     rows={2}
                     className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-emerald-500"
+                    data-testid={TEST_IDS.BENEFITS_REALIZATION.BENEFIT_EVIDENCE_NOTES_TEXTAREA(benefitIndex)}
                   />
                 </div>
               </div>

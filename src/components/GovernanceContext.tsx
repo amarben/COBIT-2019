@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Target, Plus, Trash2, Save } from 'lucide-react'
 import { AppData, EnterpriseContext, EnterpriseGoal, Stakeholder, defaultDesignFactors } from '../types'
 import DisclaimerBanner from './DisclaimerBanner'
+import { TEST_IDS } from '../constants/testIds'
 
 interface GovernanceContextProps {
   appData: AppData
@@ -103,7 +104,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
   const perspectives = ['Financial', 'Customer', 'Internal', 'Learning'] as const
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 max-w-5xl" data-testid={TEST_IDS.GOVERNANCE_CONTEXT.CONTAINER}>
       {/* Header */}
       <div className="gradient-teal text-white p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-2">
@@ -131,6 +132,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
               onChange={(e) => setContext({ ...context, organizationName: e.target.value })}
               placeholder="e.g., Global Financial Services Inc."
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              data-testid={TEST_IDS.GOVERNANCE_CONTEXT.ORG_NAME_INPUT}
             />
           </div>
           <div>
@@ -141,6 +143,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
               onChange={(e) => setContext({ ...context, industry: e.target.value })}
               placeholder="e.g., Banking and Financial Services"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              data-testid={TEST_IDS.GOVERNANCE_CONTEXT.INDUSTRY_INPUT}
             />
           </div>
           <div>
@@ -151,6 +154,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
               value={context.size}
               onChange={(e) => setContext({ ...context, size: e.target.value as EnterpriseContext['size'] })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              data-testid={TEST_IDS.GOVERNANCE_CONTEXT.ORG_SIZE_SELECT}
             >
               <option value="">Select Organization Size...</option>
               <option value="small">Small - Under 250 employees</option>
@@ -167,6 +171,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
               onChange={(e) => setContext({ ...context, itRole: e.target.value })}
               placeholder="e.g., Key enabler of digital banking"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              data-testid={TEST_IDS.GOVERNANCE_CONTEXT.IT_ROLE_INPUT}
             />
           </div>
         </div>
@@ -194,6 +199,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
                         ? 'border-teal-500 bg-teal-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
+                    data-testid={TEST_IDS.GOVERNANCE_CONTEXT.ENTERPRISE_GOAL_CHECKBOX(goal.id)}
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -239,8 +245,9 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
             onKeyPress={(e) => e.key === 'Enter' && addChallenge()}
             placeholder="e.g., Digital transformation, regulatory compliance"
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            data-testid={TEST_IDS.GOVERNANCE_CONTEXT.ADD_CHALLENGE_INPUT}
           />
-          <button onClick={addChallenge} className="btn-primary flex items-center gap-2">
+          <button onClick={addChallenge} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.GOVERNANCE_CONTEXT.ADD_CHALLENGE_BUTTON}>
             <Plus className="w-4 h-4" /> Add
           </button>
         </div>
@@ -254,6 +261,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
               <button
                 onClick={() => removeChallenge(index)}
                 className="text-red-600 hover:text-red-700"
+                data-testid={TEST_IDS.GOVERNANCE_CONTEXT.REMOVE_CHALLENGE_BUTTON(index)}
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -272,6 +280,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
             onChange={(e) => setNewStakeholder({ ...newStakeholder, name: e.target.value })}
             placeholder="e.g., Board of Directors"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            data-testid={TEST_IDS.GOVERNANCE_CONTEXT.NEW_STAKEHOLDER_NAME_INPUT}
           />
           <input
             type="text"
@@ -279,6 +288,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
             onChange={(e) => setNewStakeholder({ ...newStakeholder, needs: e.target.value })}
             placeholder="e.g., ROI visibility, risk oversight"
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            data-testid={TEST_IDS.GOVERNANCE_CONTEXT.NEW_STAKEHOLDER_NEEDS_INPUT}
           />
           <div className="flex gap-2">
             <select
@@ -290,12 +300,13 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
                 })
               }
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              data-testid={TEST_IDS.GOVERNANCE_CONTEXT.NEW_STAKEHOLDER_PRIORITY_SELECT}
             >
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
-            <button onClick={addStakeholder} className="btn-primary flex items-center gap-2">
+            <button onClick={addStakeholder} className="btn-primary flex items-center gap-2" data-testid={TEST_IDS.GOVERNANCE_CONTEXT.ADD_STAKEHOLDER_BUTTON}>
               <Plus className="w-4 h-4" /> Add
             </button>
           </div>
@@ -323,6 +334,7 @@ const GovernanceContext: React.FC<GovernanceContextProps> = ({ appData, updateAp
               <button
                 onClick={() => removeStakeholder(index)}
                 className="text-red-600 hover:text-red-700 ml-4"
+                data-testid={TEST_IDS.GOVERNANCE_CONTEXT.REMOVE_STAKEHOLDER_BUTTON(index)}
               >
                 <Trash2 className="w-4 h-4" />
               </button>
